@@ -985,4 +985,278 @@
         };
         
         const instruments = [
-            'trumset', 'mallets',
+            'trumset', 'mallets', 'slagverk-ovrigt',
+            'trumpet', 'trombon', 'valthorn', 'bariton', 'tuba',
+            'tvarflöjt', 'klarinett', 'saxofon',
+            'gitarr', 'elbas',
+            'piano',
+            'sang', 'teater', 'bild'
+        ];
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(function(tab) {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(function(content) {
+                content.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+        
+        function calculate() {
+            const config = {
+                yearHours: parseFloat(document.getElementById('configYearHours').value) || defaultConfig.yearHours,
+                musicHoursPerDay: parseFloat(document.getElementById('configMusicHoursPerDay').value) || defaultConfig.musicHoursPerDay,
+                artHoursPerDay: parseFloat(document.getElementById('configArtHoursPerDay').value) || defaultConfig.artHoursPerDay,
+                courseWeeks: parseFloat(document.getElementById('configCourseWeeks').value) || defaultConfig.courseWeeks,
+                warmupMinPerDay: parseFloat(document.getElementById('configWarmupMin').value) || defaultConfig.warmupMinPerDay,
+                practiceMinPerWeek: parseFloat(document.getElementById('configPracticeMin').value) || defaultConfig.practiceMinPerWeek,
+                practiceMinPerWeekNew: parseFloat(document.getElementById('configPracticeMinNew').value) || defaultConfig.practiceMinPerWeekNew,
+                prepMinPerLesson: parseFloat(document.getElementById('configPrepMin').value) || defaultConfig.prepMinPerLesson,
+                productionWeeks: parseFloat(document.getElementById('configProductionWeeks').value) || defaultConfig.productionWeeks,
+                lovWeeks: parseFloat(document.getElementById('configLovWeeks').value) || defaultConfig.lovWeeks,
+                lovDays: parseFloat(document.getElementById('configLovDays').value) || defaultConfig.lovDays,
+                hoursPerDay: defaultConfig.hoursPerDay,
+                hoursPerWeek: defaultConfig.hoursPerWeek
+            };
+            
+            const mainEmployment = document.getElementById('mainEmployment').value;
+            const serviceGrade = parseFloat(document.getElementById('serviceGrade').value) / 100;
+            const availableHours = config.yearHours * serviceGrade;
+            
+            const isArtSubject = ['teater', 'bild'].includes(mainEmployment);
+            const teachingHoursPerDay = isArtSubject ? config.artHoursPerDay : config.musicHoursPerDay;
+            const teachingDays = config.courseWeeks * 5;
+            const totalTeachingHours = teachingHoursPerDay * teachingDays;
+            
+            let totalPracticeHours = 0;
+            let totalWarmupHours = 0;
+            const instrumentBreakdown = [];
+            
+            instruments.forEach(function(inst) {
+                if (document.getElementById('inst-' + inst).checked) {
+                    const isNew = document.getElementById('new-' + inst).checked;
+                    const practiceMinPerWeek = isNew ? config.practiceMinPerWeekNew : config.practiceMinPerWeek;
+                    const practiceHours = (practiceMinPerWeek / 60) * config.courseWeeks;
+                    const warmupHours = (config.warmupMinPerDay / 60) * teachingDays;
+                    
+                    totalPracticeHours += practiceHours;
+                    totalWarmupHours += warmupHours;
+                    
+                    instrumentBreakdown.push({
+                        name: formatInstName(inst),
+                        practice: practiceHours,
+                        warmup: warmupHours,
+                        total: practiceHours + warmupHours,
+                        isNew: isNew
+                    });
+                }
+            });
+            
+            let totalLessonsPerWeek = 0;
+            const lessonTypes = [
+                'instrument', 'orkester', 'kör', 'band', 'blas', 'sangensemble',
+                'brasslek', 'blaslek', 'flöjt-yngre', 'pianolek', 'sang-teaterlek',
+                'produktion', 'teori'
+            ];
+            
+            lessonTypes.forEach(function(type) {
+                const count = parseFloat(document.getElementById('lesson-' + type).value) || 0;
+                totalLessonsPerWeek += count;
+            });
+            
+            const totalPrepHours = (totalLessonsPerWeek * config.prepMinPerLesson / 60) * config.courseWeeks;
+            
+            let totalMaintenanceHours = 0;
+            const maintenanceBreakdown = [];
+            
+            const brassInstruments = [
+                { id: 'trumpet', min: 45 },
+                { id: 'trombon', min: 30 },
+                { id: 'valthorn', min: 45 },
+                { id: 'bariton', min: 45 },
+                { id: 'tuba', min: 120 }
+            ];
+            
+            brassInstruments.forEach(function(inst) {
+                const count = parseFloat(document.getElementById('maint-' + inst.id).value) || 0;
+                if (count > 0) {
+                    const hoursPerTerm = (count * inst.min) / 60;
+                    const hoursPerYear = hoursPerTerm * 2;
+                    totalMaintenanceHours += hoursPerYear;
+                    maintenanceBreakdown.push({
+                        name: inst.id.charAt(0).toUpperCase() + inst.id.slice(1),
+                        hours: hoursPerYear
+                    });
+                }
+            });
+            
+            const otherInstruments = ['trumset', 'elbas', 'gitarr', 'tvarflöjt', 'klarinett', 'saxofon'];
+            otherInstruments.forEach(function(inst) {
+                const count = parseFloat(document.getElementById('maint-' + inst + '-count').value) || 0;
+                const minPerInst = parseFloat(document.getElementById('maint-' + inst + '-min').value) || 0;
+                if (count > 0 && minPerInst > 0) {
+                    const hoursPerTerm = (count * minPerInst) / 60;
+                    const hoursPerYear = hoursPerTerm * 2;
+                    totalMaintenanceHours += hoursPerYear;
+                    maintenanceBreakdown.push({
+                        name: formatMaintName(inst),
+                        hours: hoursPerYear
+                    });
+                }
+            });
+            
+            const extraPartiturMin = parseFloat(document.getElementById('extra-partitur').value) || 0;
+            const extraArrangemangMin = parseFloat(document.getElementById('extra-arrangemang').value) || 0;
+            const extraPartiturHours = (extraPartiturMin / 60) * config.courseWeeks;
+            const extraArrangemangHours = (extraArrangemangMin / 60) * config.courseWeeks;
+            const totalExtraHours = extraPartiturHours + extraArrangemangHours;
+            
+            const productionHours = config.productionWeeks * config.hoursPerWeek;
+            const lovHours = (config.lovWeeks * config.hoursPerWeek) + (config.lovDays * config.hoursPerDay);
+            
+            const otherHoursBase = 875 * serviceGrade;
+            
+            const totalRequiredHours = 
+                totalTeachingHours + 
+                totalPracticeHours + 
+                totalWarmupHours + 
+                totalPrepHours + 
+                totalMaintenanceHours + 
+                totalExtraHours + 
+                productionHours + 
+                lovHours + 
+                otherHoursBase;
+            
+            const balance = availableHours - totalRequiredHours;
+            const utilizationPercent = (totalRequiredHours / availableHours) * 100;
+            
+            const resultsDiv = document.getElementById('resultsContent');
+            
+            let alertClass = 'success';
+            let alertMessage = '';
+            let alertTitle = '';
+            
+            if (balance > 0) {
+                alertClass = 'success';
+                alertTitle = 'Tjänsten går ihop';
+                alertMessage = 'Det finns ' + balance.toFixed(0) + ' timmar kvar i budgeten.';
+            } else if (balance > -200) {
+                alertClass = 'warning';
+                alertTitle = 'Gränsfall – tjänsten är stram';
+                alertMessage = 'Det saknas ' + Math.abs(balance).toFixed(0) + ' timmar.';
+            } else {
+                alertClass = 'warning';
+                alertTitle = 'Tjänsten går INTE ihop';
+                alertMessage = 'Det saknas ' + Math.abs(balance).toFixed(0) + ' timmar.';
+            }
+            
+            let instrumentHTML = '';
+            if (instrumentBreakdown.length > 0) {
+                instrumentHTML = '<div class="item-list">';
+                instrumentBreakdown.forEach(function(inst) {
+                    const newBadge = inst.isNew ? ' <span style="background: #e74c3c; color: white; padding: 2px 8px; border-radius: 3px; font-size: 0.75em; margin-left: 5px;">NY</span>' : '';
+                    instrumentHTML += '<div class="item-row">';
+                    instrumentHTML += '<strong>' + inst.name + newBadge + '</strong>';
+                    instrumentHTML += '<span>' + inst.total.toFixed(0) + ' h/år <small>(' + inst.practice.toFixed(0) + ' h övning + ' + inst.warmup.toFixed(0) + ' h uppvärmning)</small></span>';
+                    instrumentHTML += '</div>';
+                });
+                instrumentHTML += '</div>';
+            }
+            
+            let maintenanceHTML = '';
+            if (maintenanceBreakdown.length > 0) {
+                maintenanceHTML = '<div class="item-list">';
+                maintenanceBreakdown.forEach(function(item) {
+                    maintenanceHTML += '<div class="item-row">';
+                    maintenanceHTML += '<strong>' + item.name + '</strong>';
+                    maintenanceHTML += '<span>' + item.hours.toFixed(0) + ' h/år</span>';
+                    maintenanceHTML += '</div>';
+                });
+                maintenanceHTML += '</div>';
+            }
+            
+            resultsDiv.innerHTML = '<div class="result-card"><h3>Sammanfattning</h3><p style="color: #555; font-size: 0.95em; margin-bottom: 15px;">' + formatEmploymentName(mainEmployment) + ' | ' + (serviceGrade * 100) + '% tjänst | ' + instrumentBreakdown.length + ' instrument | ' + totalLessonsPerWeek + ' lektioner/vecka</p></div>';
+            resultsDiv.innerHTML += '<div class="result-card"><h3>Total årsbelastning</h3><div class="result-value">' + totalRequiredHours.toFixed(0) + ' h / ' + availableHours.toFixed(0) + ' h</div><div class="result-bar"><div class="result-bar-fill ' + (utilizationPercent > 100 ? 'warning' : '') + ' ' + (utilizationPercent > 120 ? 'danger' : '') + '" style="width: ' + Math.min(utilizationPercent, 100) + '%;">' + utilizationPercent.toFixed(0) + '%</div></div></div>';
+            resultsDiv.innerHTML += '<div class="alert-box ' + alertClass + '"><h3>' + alertTitle + '</h3><p>' + alertMessage + '</p></div>';
+            resultsDiv.innerHTML += '<div class="result-card"><h3>Tidsfördelning</h3><div class="time-breakdown"><div class="time-item"><div class="time-item-label">Undervisning</div><div class="time-item-value">' + totalTeachingHours.toFixed(0) + ' h</div></div><div class="time-item"><div class="time-item-label">Övning</div><div class="time-item-value">' + totalPracticeHours.toFixed(0) + ' h</div></div><div class="time-item"><div class="time-item-label">Uppvärmning</div><div class="time-item-value">' + totalWarmupHours.toFixed(0) + ' h</div></div><div class="time-item"><div class="time-item-label">Förberedelse</div><div class="time-item-value">' + totalPrepHours.toFixed(0) + ' h</div></div><div class="time-item"><div class="time-item-label">Underhåll</div><div class="time-item-value">' + totalMaintenanceHours.toFixed(0) + ' h</div></div><div class="time-item"><div class="time-item-label">Extra</div><div class="time-item-value">' + totalExtraHours.toFixed(0) + ' h</div></div><div class="time-item"><div class="time-item-label">Produktion</div><div class="time-item-value">' + productionHours.toFixed(0) + ' h</div></div><div class="time-item"><div class="time-item-label">Lov</div><div class="time-item-value">' + lovHours.toFixed(0) + ' h</div></div><div class="time-item"><div class="time-item-label">Övrigt</div><div class="time-item-value">' + otherHoursBase.toFixed(0) + ' h</div></div></div></div>';
+            resultsDiv.innerHTML += '<div class="result-card"><h3>Instrument</h3>' + instrumentHTML + '<p style="margin-top: 15px; color: #666; font-size: 0.95em;"><strong>Totalt:</strong> ' + (totalPracticeHours + totalWarmupHours).toFixed(0) + ' h/år</p></div>';
+            resultsDiv.innerHTML += '<div class="result-card"><h3>Underhåll</h3>' + maintenanceHTML + '<p style="margin-top: 15px; color: #666; font-size: 0.95em;"><strong>Totalt:</strong> ' + totalMaintenanceHours.toFixed(0) + ' h/år</p></div>';
+            resultsDiv.innerHTML += '<div class="result-card"><h3>Lektioner</h3><div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"><div style="background: #f8f9fa; padding: 15px; border-radius: 4px; border: 1px solid #e0e0e0;"><strong style="color: #2c3e50;">Totalt:</strong> <span style="color: #555; font-size: 1.1em; margin-left: 10px;">' + totalLessonsPerWeek + ' lektioner/vecka</span></div><div style="background: #f8f9fa; padding: 15px; border-radius: 4px; border: 1px solid #e0e0e0;"><strong style="color: #2c3e50;">Förberedelse:</strong> <span style="color: #555; font-size: 1.1em; margin-left: 10px;">' + totalPrepHours.toFixed(0) + ' h/år</span></div></div></div>';
+            resultsDiv.innerHTML += '<div class="info-list"><h4>Förklaring</h4><ul><li><strong>Undervisning:</strong> Lektionstid med elever (' + config.courseWeeks + ' veckor)</li><li><strong>Övning:</strong> ' + config.practiceMinPerWeek + ' min/vecka per instrument (' + config.practiceMinPerWeekNew + ' min/vecka för nya)</li><li><strong>Uppvärmning:</strong> ' + config.warmupMinPerDay + ' min/dag per instrument</li><li><strong>Förberedelse:</strong> ' + config.prepMinPerLesson + ' min per lektion</li><li><strong>Underhåll:</strong> Enligt instrumentansvar</li><li><strong>Produktion:</strong> ' + config.productionWeeks + ' veckor × 40 h = ' + productionHours.toFixed(0) + ' h/år</li><li><strong>Lov:</strong> ' + config.lovWeeks + ' veckor + ' + config.lovDays + ' dagar = ' + lovHours.toFixed(0) + ' h/år</li><li><strong>Övrigt:</strong> Planering, admin, möten, kompetensutveckling</li></ul></div>';
+        }
+        
+        function formatInstName(inst) {
+            const names = {
+                'trumset': 'Trumset',
+                'mallets': 'Mallets',
+                'slagverk-ovrigt': 'Övrigt slagverk',
+                'trumpet': 'Trumpet',
+                'trombon': 'Trombon',
+                'valthorn': 'Valthorn',
+                'bariton': 'Bariton',
+                'tuba': 'Tuba',
+                'tvarflöjt': 'Tvärflöjt',
+                'klarinett': 'Klarinett',
+                'saxofon': 'Saxofon',
+                'gitarr': 'Gitarr',
+                'elbas': 'Elbas',
+                'piano': 'Piano',
+                'sang': 'Sång',
+                'teater': 'Teater',
+                'bild': 'Bild'
+            };
+            return names[inst] || inst;
+        }
+        
+        function formatMaintName(inst) {
+            const names = {
+                'trumset': 'Trumset',
+                'elbas': 'Elbas',
+                'gitarr': 'Gitarr',
+                'tvarflöjt': 'Tvärflöjt',
+                'klarinett': 'Klarinett',
+                'saxofon': 'Saxofon'
+            };
+            return names[inst] || inst;
+        }
+        
+        function formatEmploymentName(employment) {
+            const names = {
+                'slagverk': 'Slagverkslärare',
+                'brass': 'Brasslärare',
+                'trablas': 'Träblåslärare',
+                'gitarr': 'Gitarrlärare',
+                'elbas': 'Elbaslärare',
+                'piano': 'Pianolärare',
+                'sang': 'Sånglärare',
+                'teater': 'Teaterlärare',
+                'bild': 'Bildlärare'
+            };
+            return names[employment] || employment;
+        }
+        
+        function resetConfig() {
+            document.getElementById('configYearHours').value = defaultConfig.yearHours;
+            document.getElementById('configMusicHoursPerDay').value = defaultConfig.musicHoursPerDay;
+            document.getElementById('configArtHoursPerDay').value = defaultConfig.artHoursPerDay;
+            document.getElementById('configCourseWeeks').value = defaultConfig.courseWeeks;
+            document.getElementById('configWarmupMin').value = defaultConfig.warmupMinPerDay;
+            document.getElementById('configPracticeMin').value = defaultConfig.practiceMinPerWeek;
+            document.getElementById('configPracticeMinNew').value = defaultConfig.practiceMinPerWeekNew;
+            document.getElementById('configPrepMin').value = defaultConfig.prepMinPerLesson;
+            document.getElementById('configProductionWeeks').value = defaultConfig.productionWeeks;
+            document.getElementById('configLovWeeks').value = defaultConfig.lovWeeks;
+            document.getElementById('configLovDays').value = defaultConfig.lovDays;
+            
+            calculate();
+            alert('Standardvärden återställda!');
+        }
+        
+        window.onload = function() {
+            calculate();
+        };
+    </script>
+</body>
+</html>
