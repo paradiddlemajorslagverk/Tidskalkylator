@@ -103,6 +103,13 @@
             width: 100px;
         }
         
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
         .checkbox-group {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -153,18 +160,13 @@
             cursor: pointer;
         }
         
-        .checkbox-subitem input {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
-        
         .input-inline {
             display: flex;
             align-items: center;
             gap: 8px;
             margin-top: 5px;
             padding-left: 25px;
+            flex-wrap: wrap;
         }
         
         .input-inline label {
@@ -263,7 +265,7 @@
         
         .time-breakdown {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-top: 20px;
         }
@@ -276,13 +278,13 @@
         }
         
         .time-item-label {
-            font-size: 0.8em;
+            font-size: 0.75em;
             opacity: 0.9;
             margin-bottom: 5px;
         }
         
         .time-item-value {
-            font-size: 1.3em;
+            font-size: 1.2em;
             font-weight: 700;
         }
         
@@ -312,12 +314,12 @@
         }
         
         .tab {
-            padding: 12px 20px;
+            padding: 12px 18px;
             cursor: pointer;
             border-bottom: 3px solid transparent;
             transition: all 0.3s;
             font-weight: 600;
-            font-size: 0.95em;
+            font-size: 0.9em;
         }
         
         .tab.active {
@@ -335,7 +337,7 @@
         
         .config-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
         }
         
@@ -348,17 +350,6 @@
             font-size: 0.9em;
         }
         
-        .selected-count {
-            background: #667eea;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-        
         .section-header {
             background: #667eea;
             color: white;
@@ -368,11 +359,23 @@
             font-weight: 600;
         }
         
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
+        .number-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .number-input-group label {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .number-input-group input[type="number"] {
+            width: 80px;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
         }
     </style>
 </head>
@@ -389,8 +392,9 @@
                 <div class="tabs">
                     <div class="tab active" onclick="switchTab('employment')">Anställning</div>
                     <div class="tab" onclick="switchTab('instruments')">Instrument</div>
-                    <div class="tab" onclick="switchTab('lessons')">Lektionsformer</div>
-                    <div class="tab" onclick="switchTab('extra')">Extra uppgifter</div>
+                    <div class="tab" onclick="switchTab('lessons')">Lektioner</div>
+                    <div class="tab" onclick="switchTab('maintenance')">Instrumentansvar</div>
+                    <div class="tab" onclick="switchTab('extra')">Extra</div>
                     <div class="tab" onclick="switchTab('config')">Inställningar</div>
                 </div>
                 
@@ -438,19 +442,14 @@
                     <h2>🎼 Instrument du undervisar i</h2>
                     <p style="margin-bottom: 15px; color: #666;">Välj ALLA instrument och fyll i rengöringstid:</p>
                     
-                    <div class="selected-count">
-                        <span id="selectedCount">0</span> instrument valda
-                    </div>
-                    
                     <div class="checkbox-group">
-                        <!-- Slagverk -->
                         <div class="checkbox-item">
                             <div>
                                 <input type="checkbox" id="inst-trumset" value="trumset" onchange="updateCount()">
                                 <label for="inst-trumset">🥁 Trumset</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-trumset" onchange="updateCount()">
+                                <input type="checkbox" id="new-trumset">
                                 <label for="new-trumset">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -465,7 +464,7 @@
                                 <label for="inst-mallets">🎼 Mallets</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-mallets" onchange="updateCount()">
+                                <input type="checkbox" id="new-mallets">
                                 <label for="new-mallets">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -480,7 +479,7 @@
                                 <label for="inst-slagverk-ovrigt">🎵 Övrigt slagverk</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-slagverk-ovrigt" onchange="updateCount()">
+                                <input type="checkbox" id="new-slagverk-ovrigt">
                                 <label for="new-slagverk-ovrigt">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -489,14 +488,13 @@
                             </div>
                         </div>
                         
-                        <!-- Brass -->
                         <div class="checkbox-item">
                             <div>
                                 <input type="checkbox" id="inst-trumpet" value="trumpet" onchange="updateCount()">
                                 <label for="inst-trumpet">🎺 Trumpet</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-trumpet" onchange="updateCount()">
+                                <input type="checkbox" id="new-trumpet">
                                 <label for="new-trumpet">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -511,7 +509,7 @@
                                 <label for="inst-trombon">🎺 Trombon</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-trombon" onchange="updateCount()">
+                                <input type="checkbox" id="new-trombon">
                                 <label for="new-trombon">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -526,7 +524,7 @@
                                 <label for="inst-valthorn">🎺 Valthorn</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-valthorn" onchange="updateCount()">
+                                <input type="checkbox" id="new-valthorn">
                                 <label for="new-valthorn">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -541,7 +539,7 @@
                                 <label for="inst-bariton">🎺 Bariton</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-bariton" onchange="updateCount()">
+                                <input type="checkbox" id="new-bariton">
                                 <label for="new-bariton">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -556,7 +554,7 @@
                                 <label for="inst-tuba">🎺 Tuba</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-tuba" onchange="updateCount()">
+                                <input type="checkbox" id="new-tuba">
                                 <label for="new-tuba">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -565,14 +563,13 @@
                             </div>
                         </div>
                         
-                        <!-- Träblås -->
                         <div class="checkbox-item">
                             <div>
                                 <input type="checkbox" id="inst-tvarflöjt" value="tvarflöjt" onchange="updateCount()">
                                 <label for="inst-tvarflöjt">🎵 Tvärflöjt</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-tvarflöjt" onchange="updateCount()">
+                                <input type="checkbox" id="new-tvarflöjt">
                                 <label for="new-tvarflöjt">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -587,7 +584,7 @@
                                 <label for="inst-klarinett">🎵 Klarinett</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-klarinett" onchange="updateCount()">
+                                <input type="checkbox" id="new-klarinett">
                                 <label for="new-klarinett">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -602,7 +599,7 @@
                                 <label for="inst-saxofon">🎵 Saxofon</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-saxofon" onchange="updateCount()">
+                                <input type="checkbox" id="new-saxofon">
                                 <label for="new-saxofon">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -611,14 +608,13 @@
                             </div>
                         </div>
                         
-                        <!-- Sträng -->
                         <div class="checkbox-item">
                             <div>
                                 <input type="checkbox" id="inst-gitarr" value="gitarr" onchange="updateCount()">
                                 <label for="inst-gitarr">🎸 Gitarr</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-gitarr" onchange="updateCount()">
+                                <input type="checkbox" id="new-gitarr">
                                 <label for="new-gitarr">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -633,7 +629,7 @@
                                 <label for="inst-elbas">🎸 Elbas</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-elbas" onchange="updateCount()">
+                                <input type="checkbox" id="new-elbas">
                                 <label for="new-elbas">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -642,14 +638,13 @@
                             </div>
                         </div>
                         
-                        <!-- Keyboard -->
                         <div class="checkbox-item">
                             <div>
                                 <input type="checkbox" id="inst-piano" value="piano" onchange="updateCount()">
                                 <label for="inst-piano">🎹 Piano</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-piano" onchange="updateCount()">
+                                <input type="checkbox" id="new-piano">
                                 <label for="new-piano">Nytt instrument (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -658,14 +653,13 @@
                             </div>
                         </div>
                         
-                        <!-- Sång -->
                         <div class="checkbox-item">
                             <div>
                                 <input type="checkbox" id="inst-sang" value="sang" onchange="updateCount()">
                                 <label for="inst-sang">🎤 Sång</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-sang" onchange="updateCount()">
+                                <input type="checkbox" id="new-sang">
                                 <label for="new-sang">Nytt ämne (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -674,14 +668,13 @@
                             </div>
                         </div>
                         
-                        <!-- Teater -->
                         <div class="checkbox-item">
                             <div>
                                 <input type="checkbox" id="inst-teater" value="teater" onchange="updateCount()">
                                 <label for="inst-teater">🎭 Teater</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-teater" onchange="updateCount()">
+                                <input type="checkbox" id="new-teater">
                                 <label for="new-teater">Nytt ämne (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -690,14 +683,13 @@
                             </div>
                         </div>
                         
-                        <!-- Bild -->
                         <div class="checkbox-item">
                             <div>
                                 <input type="checkbox" id="inst-bild" value="bild" onchange="updateCount()">
                                 <label for="inst-bild">🎨 Bild</label>
                             </div>
                             <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-bild" onchange="updateCount()">
+                                <input type="checkbox" id="new-bild">
                                 <label for="new-bild">Nytt ämne (första terminen)</label>
                             </div>
                             <div class="input-inline">
@@ -715,91 +707,216 @@
                     </div>
                 </div>
                 
-                <!-- TAB 3: LEKTIONSFORMER -->
+                <!-- TAB 3: LEKTIONER -->
                 <div id="tab-lessons" class="tab-content section">
-                    <h2>📚 Lektionsformer du undervisar i</h2>
-                    <p style="margin-bottom: 15px; color: #666;">Välj ALLA former och ange om de är nya:</p>
+                    <h2>📚 Lektioner & Ensembler</h2>
+                    <p style="margin-bottom: 15px; color: #666;">Ange antal lektioner/ensembler per vecka:</p>
                     
                     <div class="section-header">Grundformer</div>
                     
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <div>
-                                <input type="checkbox" id="lesson-instrument" value="instrument" onchange="updateCount()">
-                                <label for="lesson-instrument">🎼 Instrumentlektion</label>
-                            </div>
-                            <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-instrument" onchange="updateCount()">
-                                <label for="new-instrument">Ny form (första terminen)</label>
-                            </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>🎼 Instrumentlektioner (per vecka):</label>
+                            <input type="number" id="lesson-instrument" value="0" min="0">
                         </div>
                         
-                        <div class="checkbox-item">
-                            <div>
-                                <input type="checkbox" id="lesson-orkester" value="orkester" onchange="updateCount()">
-                                <label for="lesson-orkester">🎻 Orkester</label>
-                            </div>
-                            <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-orkester" onchange="updateCount()">
-                                <label for="new-orkester">Ny form (första terminen)</label>
-                            </div>
-                        </div>
-                        
-                        <div class="checkbox-item">
-                            <div>
-                                <input type="checkbox" id="lesson-kör" value="kör" onchange="updateCount()">
-                                <label for="lesson-kör">🎤 Kör</label>
-                            </div>
-                            <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-kör" onchange="updateCount()">
-                                <label for="new-kör">Ny form (första terminen)</label>
-                            </div>
+                        <div class="form-group">
+                            <label>🎻 Orkester (per vecka):</label>
+                            <input type="number" id="lesson-orkester" value="0" min="0">
                         </div>
                     </div>
                     
-                    <div class="section-header">Ensembler</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>🎤 Kör (per vecka):</label>
+                            <input type="number" id="lesson-kör" value="0" min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>🎸 Band/Rockband (per vecka):</label>
+                            <input type="number" id="lesson-band" value="0" min="0">
+                        </div>
+                    </div>
                     
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <div>
-                                <input type="checkbox" id="lesson-band" value="band" onchange="updateCount()">
-                                <label for="lesson-band">🎸 Band (rockband)</label>
-                            </div>
-                            <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-band" onchange="updateCount()">
-                                <label for="new-band">Ny ensemble (första terminen)</label>
-                            </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>🎺 Blåsensemble (per vecka):</label>
+                            <input type="number" id="lesson-blas" value="0" min="0">
                         </div>
                         
-                        <div class="checkbox-item">
-                            <div>
-                                <input type="checkbox" id="lesson-blas" value="blas" onchange="updateCount()">
-                                <label for="lesson-blas">🎺 Blåsensemble</label>
-                            </div>
-                            <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-blas" onchange="updateCount()">
-                                <label for="new-blas">Ny ensemble (första terminen)</label>
-                            </div>
+                        <div class="form-group">
+                            <label>🎤 Sångensemble (per vecka):</label>
+                            <input type="number" id="lesson-sangensemble" value="0" min="0">
+                        </div>
+                    </div>
+                    
+                    <div class="section-header">Kurser för yngre (6-8 år)</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>🎺 Brasslek (per vecka):</label>
+                            <input type="number" id="lesson-brasslek" value="0" min="0">
                         </div>
                         
-                        <div class="checkbox-item">
-                            <div>
-                                <input type="checkbox" id="lesson-sangensemble" value="sangensemble" onchange="updateCount()">
-                                <label for="lesson-sangensemble">🎤 Sångensemble</label>
-                            </div>
-                            <div class="checkbox-subitem">
-                                <input type="checkbox" id="new-sangensemble" onchange="updateCount()">
-                                <label for="new-sangensemble">Ny ensemble (första terminen)</label>
-                            </div>
+                        <div class="form-group">
+                            <label>🎵 Blåslek (per vecka):</label>
+                            <input type="number" id="lesson-blaslek" value="0" min="0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>🎵 Flöjt yngre (per vecka):</label>
+                            <input type="number" id="lesson-flöjt-yngre" value="0" min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>🎹 Pianolek (per vecka):</label>
+                            <input type="number" id="lesson-pianolek" value="0" min="0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>🎤 Sång/teaterlek (per vecka):</label>
+                            <input type="number" id="lesson-sang-teaterlek" value="0" min="0">
+                        </div>
+                    </div>
+                    
+                    <div class="section-header">Övriga ämnen</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>🎛️ Musikproduktion (per vecka):</label>
+                            <input type="number" id="lesson-produktion" value="0" min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>📝 Musikteori (per vecka):</label>
+                            <input type="number" id="lesson-teori" value="0" min="0">
                         </div>
                     </div>
                     
                     <div class="parameter-info" style="margin-top: 20px;">
-                        <strong>💡 Förberedelsetid:</strong> Samma för alla ensembler. +50% för nya första terminen.
+                        <strong>💡 Förberedelsetid:</strong> Samma för alla former. +50% för nya första terminen (anges under Instrumentansvar).
                     </div>
                 </div>
                 
-                <!-- TAB 4: EXTRA UPPGIFTER -->
+                <!-- TAB 4: INSTRUMENTANSVAR -->
+                <div id="tab-maintenance" class="tab-content section">
+                    <h2>🔧 Instrumentansvar (underhåll)</h2>
+                    <p style="margin-bottom: 15px; color: #666;">Ange antal instrument du har ansvar för:</p>
+                    
+                    <div class="section-header">Brassinstrument</div>
+                    
+                    <div class="form-row">
+                        <div class="number-input-group">
+                            <label>🎺 Trumpet (45 min/st/termin):</label>
+                            <input type="number" id="maint-trumpet" value="0" min="0">
+                            <span>st</span>
+                        </div>
+                        
+                        <div class="number-input-group">
+                            <label>🎺 Trombon (30 min/st/termin):</label>
+                            <input type="number" id="maint-trombon" value="0" min="0">
+                            <span>st</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="number-input-group">
+                            <label>🎺 Valthorn (45 min/st/termin):</label>
+                            <input type="number" id="maint-valthorn" value="0" min="0">
+                            <span>st</span>
+                        </div>
+                        
+                        <div class="number-input-group">
+                            <label>🎺 Bariton (45 min/st/termin):</label>
+                            <input type="number" id="maint-bariton" value="0" min="0">
+                            <span>st</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="number-input-group">
+                            <label>🎺 Tuba (120 min/st/termin):</label>
+                            <input type="number" id="maint-tuba" value="0" min="0">
+                            <span>st</span>
+                        </div>
+                    </div>
+                    
+                    <div class="section-header">Övriga instrument</div>
+                    
+                    <div class="form-row">
+                        <div class="number-input-group">
+                            <label>🥁 Trumset (min/st/termin):</label>
+                            <input type="number" id="maint-trumset-count" value="0" min="0">
+                            <span>st ×</span>
+                            <input type="number" id="maint-trumset-min" value="60" min="0">
+                            <span>min</span>
+                        </div>
+                        
+                        <div class="number-input-group">
+                            <label>🎸 Elbas (min/st/termin):</label>
+                            <input type="number" id="maint-elbas-count" value="0" min="0">
+                            <span>st ×</span>
+                            <input type="number" id="maint-elbas-min" value="60" min="0">
+                            <span>min</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="number-input-group">
+                            <label>🎸 Gitarr (min/st/termin):</label>
+                            <input type="number" id="maint-gitarr-count" value="0" min="0">
+                            <span>st ×</span>
+                            <input type="number" id="maint-gitarr-min" value="60" min="0">
+                            <span>min</span>
+                        </div>
+                        
+                        <div class="number-input-group">
+                            <label>🎼 Mallets (min/st/termin):</label>
+                            <input type="number" id="maint-mallets-count" value="0" min="0">
+                            <span>st ×</span>
+                            <input type="number" id="maint-mallets-min" value="60" min="0">
+                            <span>min</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="number-input-group">
+                            <label>🎵 Träblås (min/st/termin):</label>
+                            <input type="number" id="maint-trablas-count" value="0" min="0">
+                            <span>st ×</span>
+                            <input type="number" id="maint-trablas-min" value="45" min="0">
+                            <span>min</span>
+                        </div>
+                        
+                        <div class="number-input-group">
+                            <label>🎹 Piano (min/st/termin):</label>
+                            <input type="number" id="maint-piano-count" value="0" min="0">
+                            <span>st ×</span>
+                            <input type="number" id="maint-piano-min" value="30" min="0">
+                            <span>min</span>
+                        </div>
+                    </div>
+                    
+                    <div class="section-header">Förberedelse terminsstart</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>⏰ Förberedelse (dagar):</label>
+                            <input type="number" id="maint-prep-days" value="2" min="0" step="0.5">
+                            <small style="color: #666; display: block; margin-top: 5px;">8 timmar/dag</small>
+                        </div>
+                    </div>
+                    
+                    <div class="parameter-info" style="margin-top: 20px;">
+                        <strong>💡 Exempel:</strong> Om du har ansvar för 6 trumset och varje tar 60 min/termin = 360 min/termin = 6 timmar/termin.
+                    </div>
+                </div>
+                
+                <!-- TAB 5: EXTRA -->
                 <div id="tab-extra" class="tab-content section">
                     <h2>📋 Extra arbetsuppgifter</h2>
                     <p style="margin-bottom: 15px; color: #666;">Tid per vecka för extra uppgifter:</p>
@@ -823,7 +940,7 @@
                     </div>
                 </div>
                 
-                <!-- TAB 5: KONFIGURATION -->
+                <!-- TAB 6: KONFIGURATION -->
                 <div id="tab-config" class="tab-content section">
                     <h2>⚙️ Systeminställningar</h2>
                     <p style="margin-bottom: 15px; color: #666;">Alla parametrar är redigerbara:</p>
@@ -865,13 +982,8 @@
                         </div>
                         
                         <div class="form-group">
-                            <label>Förberedelse ensemble (min/vecka):</label>
-                            <input type="number" id="configPrepMin" value="30">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Förberedelse NY ensemble (min/vecka):</label>
-                            <input type="number" id="configPrepMinNew" value="45">
+                            <label>Förberedelse per lektion (min):</label>
+                            <input type="number" id="configPrepMin" value="15">
                         </div>
                         
                         <div class="form-group">
@@ -922,11 +1034,11 @@
             warmupMinPerDay: 15,
             practiceMinPerWeek: 60,
             practiceMinPerWeekNew: 90,
-            prepMinPerWeek: 30,
-            prepMinPerWeekNew: 45,
+            prepMinPerLesson: 15,
             productionHours: 40,
             lovHours: 189,
-            termsPerYear: 2
+            termsPerYear: 2,
+            hoursPerDay: 8
         };
         
         const instruments = [
@@ -938,13 +1050,8 @@
             'sang', 'teater', 'bild'
         ];
         
-        const lessons = [
-            'instrument', 'orkester', 'kör',
-            'band', 'blas', 'sangensemble'
-        ];
-        
         window.onload = function() {
-            updateCount();
+            // Init
         };
         
         function switchTab(tabName) {
@@ -960,11 +1067,7 @@
         }
         
         function updateCount() {
-            let instCount = 0;
-            instruments.forEach(inst => {
-                if (document.getElementById('inst-' + inst).checked) instCount++;
-            });
-            document.getElementById('selectedCount').textContent = instCount;
+            // Placeholder
         }
         
         function calculate() {
@@ -976,11 +1079,11 @@
                 warmupMinPerDay: parseFloat(document.getElementById('configWarmupMin').value) || defaultConfig.warmupMinPerDay,
                 practiceMinPerWeek: parseFloat(document.getElementById('configPracticeMin').value) || defaultConfig.practiceMinPerWeek,
                 practiceMinPerWeekNew: parseFloat(document.getElementById('configPracticeMinNew').value) || defaultConfig.practiceMinPerWeekNew,
-                prepMinPerWeek: parseFloat(document.getElementById('configPrepMin').value) || defaultConfig.prepMinPerWeek,
-                prepMinPerWeekNew: parseFloat(document.getElementById('configPrepMinNew').value) || defaultConfig.prepMinPerWeekNew,
+                prepMinPerLesson: parseFloat(document.getElementById('configPrepMin').value) || defaultConfig.prepMinPerLesson,
                 productionHours: parseFloat(document.getElementById('configProductionHours').value) || defaultConfig.productionHours,
                 lovHours: parseFloat(document.getElementById('configLovHours').value) || defaultConfig.lovHours,
-                termsPerYear: parseInt(document.getElementById('configTermsPerYear').value) || defaultConfig.termsPerYear
+                termsPerYear: parseInt(document.getElementById('configTermsPerYear').value) || defaultConfig.termsPerYear,
+                hoursPerDay: defaultConfig.hoursPerDay
             };
             
             const mainEmployment = document.getElementById('mainEmployment').value;
@@ -1024,25 +1127,68 @@
                 }
             });
             
-            // Lektionsformer - förberedelsetid
-            let totalPrepHours = 0;
-            const lessonBreakdown = [];
+            // Lektioner & ensembler - förberedelse
+            let totalLessonsPerWeek = 0;
+            const lessonTypes = [
+                'instrument', 'orkester', 'kör', 'band', 'blas', 'sangensemble',
+                'brasslek', 'blaslek', 'flöjt-yngre', 'pianolek', 'sang-teaterlek',
+                'produktion', 'teori'
+            ];
             
-            lessons.forEach(lesson => {
-                if (document.getElementById('lesson-' + lesson).checked) {
-                    const isNew = document.getElementById('new-' + lesson).checked;
-                    const prepMinPerWeek = isNew ? config.prepMinPerWeekNew : config.prepMinPerWeek;
-                    const prepHours = (prepMinPerWeek / 60) * config.courseWeeks;
-                    
-                    totalPrepHours += prepHours;
-                    
-                    lessonBreakdown.push({
-                        name: formatLessonName(lesson),
-                        prep: prepHours,
-                        isNew: isNew
+            lessonTypes.forEach(type => {
+                const count = parseFloat(document.getElementById('lesson-' + type).value) || 0;
+                totalLessonsPerWeek += count;
+            });
+            
+            const totalPrepHours = (totalLessonsPerWeek * config.prepMinPerLesson / 60) * config.courseWeeks;
+            
+            // Instrumentansvar - underhåll
+            let totalMaintenanceHours = 0;
+            const maintenanceBreakdown = [];
+            
+            // Brass
+            const brassInstruments = [
+                { id: 'trumpet', min: 45 },
+                { id: 'trombon', min: 30 },
+                { id: 'valthorn', min: 45 },
+                { id: 'bariton', min: 45 },
+                { id: 'tuba', min: 120 }
+            ];
+            
+            brassInstruments.forEach(inst => {
+                const count = parseFloat(document.getElementById('maint-' + inst.id).value) || 0;
+                if (count > 0) {
+                    const hoursPerTerm = (count * inst.min) / 60;
+                    const hoursPerYear = hoursPerTerm * config.termsPerYear;
+                    totalMaintenanceHours += hoursPerYear;
+                    maintenanceBreakdown.push({
+                        name: '🎺 ' + inst.id.charAt(0).toUpperCase() + inst.id.slice(1),
+                        hours: hoursPerYear
                     });
                 }
             });
+            
+            // Övriga instrument
+            const otherInstruments = ['trumset', 'elbas', 'gitarr', 'mallets', 'trablas', 'piano'];
+            otherInstruments.forEach(inst => {
+                const count = parseFloat(document.getElementById('maint-' + inst + '-count').value) || 0;
+                const minPerInst = parseFloat(document.getElementById('maint-' + inst + '-min').value) || 0;
+                if (count > 0 && minPerInst > 0) {
+                    const hoursPerTerm = (count * minPerInst) / 60;
+                    const hoursPerYear = hoursPerTerm * config.termsPerYear;
+                    totalMaintenanceHours += hoursPerYear;
+                    maintenanceBreakdown.push({
+                        name: formatMaintName(inst),
+                        hours: hoursPerYear
+                    });
+                }
+            });
+            
+            // Förberedelse terminsstart
+            const prepDays = parseFloat(document.getElementById('maint-prep-days').value) || 0;
+            const prepHoursTermStart = prepDays * config.hoursPerDay;
+            const prepHoursYear = prepHoursTermStart * config.termsPerYear;
+            totalMaintenanceHours += prepHoursYear;
             
             // Extra uppgifter
             const extraPartiturMin = parseFloat(document.getElementById('extra-partitur').value) || 0;
@@ -1059,249 +1205,4 @@
                 totalTeachingHours + 
                 totalPracticeHours + 
                 totalWarmupHours + 
-                totalCleaningHours + 
-                totalPrepHours + 
-                totalExtraHours + 
-                config.productionHours + 
-                config.lovHours + 
-                otherHoursBase;
-            
-            const balance = availableHours - totalRequiredHours;
-            const utilizationPercent = (totalRequiredHours / availableHours) * 100;
-            
-            // Render results
-            const resultsDiv = document.getElementById('resultsContent');
-            
-            let alertClass = 'success';
-            let alertMessage = '';
-            let alertTitle = '';
-            
-            if (balance > 0) {
-                alertClass = 'success';
-                alertTitle = '✅ Tjänsten går ihop!';
-                alertMessage = `Det finns <strong>${balance.toFixed(0)} timmar</strong> kvar i budgeten.`;
-            } else if (balance > -200) {
-                alertClass = 'warning';
-                alertTitle = '⚠️ Gränsfall – tjänsten är stram';
-                alertMessage = `Det saknas <strong>${Math.abs(balance).toFixed(0)} timmar</strong>.`;
-            } else {
-                alertClass = 'warning';
-                alertTitle = '❌ Tjänsten går INTE ihop!';
-                alertMessage = `Det saknas <strong>${Math.abs(balance).toFixed(0)} timmar</strong>.`;
-            }
-            
-            // Instrumentlista
-            let instrumentHTML = '';
-            if (instrumentBreakdown.length > 0) {
-                instrumentHTML = '<div style="margin-top: 15px;">';
-                instrumentBreakdown.forEach(inst => {
-                    const newBadge = inst.isNew ? '<span style="background: #f5576c; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75em; margin-left: 5px;">NY</span>' : '';
-                    instrumentHTML += `
-                        <div style="background: rgba(255,255,255,0.1); padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                            <span><strong>${inst.name}</strong>${newBadge}</span>
-                            <span>${inst.total.toFixed(0)} h/år 
-                                <small style="opacity:0.7">(${inst.practice.toFixed(0)} h övning + ${inst.warmup.toFixed(0)} h uppvärmning + ${inst.cleaning.toFixed(0)} h rengöring)</small>
-                            </span>
-                        </div>
-                    `;
-                });
-                instrumentHTML += '</div>';
-            }
-            
-            // Lektionsformer
-            let lessonHTML = '';
-            if (lessonBreakdown.length > 0) {
-                lessonHTML = '<div style="margin-top: 15px;">';
-                lessonBreakdown.forEach(lesson => {
-                    const newBadge = lesson.isNew ? '<span style="background: #f5576c; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75em; margin-left: 5px;">NY</span>' : '';
-                    lessonHTML += `
-                        <div style="background: rgba(255,255,255,0.1); padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                            <span><strong>${lesson.name}</strong>${newBadge}</span>
-                            <span>${lesson.prep.toFixed(0)} h/år förberedelse</span>
-                        </div>
-                    `;
-                });
-                lessonHTML += '</div>';
-            }
-            
-            resultsDiv.innerHTML = `
-                <div class="result-card">
-                    <h3>💼 ${formatEmploymentName(mainEmployment)}</h3>
-                    <p style="opacity:0.9;">${serviceGrade * 100}% tjänst | ${instrumentBreakdown.length} instrument | ${lessonBreakdown.length} lektionsformer</p>
-                </div>
-                
-                <div class="result-card">
-                    <h3>⏱️ Total årsbelastning</h3>
-                    <div class="result-value">${totalRequiredHours.toFixed(0)} h / ${availableHours.toFixed(0)} h</div>
-                    <div class="result-bar">
-                        <div class="result-bar-fill ${utilizationPercent > 100 ? 'warning' : ''} ${utilizationPercent > 120 ? 'danger' : ''}" 
-                             style="width: ${Math.min(utilizationPercent, 100)}%;">
-                            ${utilizationPercent.toFixed(0)}%
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="alert-box ${alertClass}">
-                    <h3 style="margin-bottom: 10px;">${alertTitle}</h3>
-                    <p>${alertMessage}</p>
-                </div>
-                
-                <div class="result-card" style="margin-top: 20px;">
-                    <h3>📋 Tidsfördelning</h3>
-                    <div class="time-breakdown">
-                        <div class="time-item">
-                            <div class="time-item-label">Undervisning</div>
-                            <div class="time-item-value">${totalTeachingHours.toFixed(0)} h</div>
-                        </div>
-                        <div class="time-item">
-                            <div class="time-item-label">Övning</div>
-                            <div class="time-item-value">${totalPracticeHours.toFixed(0)} h</div>
-                        </div>
-                        <div class="time-item">
-                            <div class="time-item-label">Uppvärmning</div>
-                            <div class="time-item-value">${totalWarmupHours.toFixed(0)} h</div>
-                        </div>
-                        <div class="time-item">
-                            <div class="time-item-label">Rengöring</div>
-                            <div class="time-item-value">${totalCleaningHours.toFixed(0)} h</div>
-                        </div>
-                        <div class="time-item">
-                            <div class="time-item-label">Förberedelse</div>
-                            <div class="time-item-value">${totalPrepHours.toFixed(0)} h</div>
-                        </div>
-                        <div class="time-item">
-                            <div class="time-item-label">Extra uppgifter</div>
-                            <div class="time-item-value">${totalExtraHours.toFixed(0)} h</div>
-                        </div>
-                        <div class="time-item">
-                            <div class="time-item-label">Produktion</div>
-                            <div class="time-item-value">${config.productionHours.toFixed(0)} h</div>
-                        </div>
-                        <div class="time-item">
-                            <div class="time-item-label">Lovverksamhet</div>
-                            <div class="time-item-value">${config.lovHours.toFixed(0)} h</div>
-                        </div>
-                        <div class="time-item">
-                            <div class="time-item-label">Övrig tid</div>
-                            <div class="time-item-value">${otherHoursBase.toFixed(0)} h</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="result-card" style="margin-top: 20px;">
-                    <h3>🎼 Instrumentbelastning</h3>
-                    ${instrumentHTML}
-                    <p style="margin-top: 15px; opacity: 0.9;">
-                        <strong>Totalt:</strong> ${(totalPracticeHours + totalWarmupHours + totalCleaningHours).toFixed(0)} timmar/år 
-                        för ${instrumentBreakdown.length} instrument
-                    </p>
-                </div>
-                
-                <div class="result-card" style="margin-top: 20px;">
-                    <h3>📚 Lektionsformer</h3>
-                    ${lessonHTML}
-                    <p style="margin-top: 15px; opacity: 0.9;">
-                        <strong>Totalt:</strong> ${totalPrepHours.toFixed(0)} timmar/år 
-                        för ${lessonBreakdown.length} former
-                    </p>
-                </div>
-                
-                <div class="result-card" style="margin-top: 20px;">
-                    <h3>📋 Extra uppgifter</h3>
-                    <div style="margin-top: 10px;">
-                        <div style="background: rgba(255,255,255,0.1); padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
-                            <span>🎼 Partiturstudier</span>
-                            <span>${extraPartiturHours.toFixed(0)} h/år</span>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.1); padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
-                            <span>✍️ Arrangering</span>
-                            <span>${extraArrangemangHours.toFixed(0)} h/år</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="alert-box" style="margin-top: 20px; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3);">
-                    <h4 style="margin-bottom: 10px;">💡 Vad betyder detta?</h4>
-                    <ul style="padding-left: 20px; line-height: 1.6;">
-                        <li><strong>Undervisning:</strong> Lektionstid med elever (${config.courseWeeks} veckor)</li>
-                        <li><strong>Övning:</strong> ${config.practiceMinPerWeek} min/vecka (${config.practiceMinPerWeekNew} min/vecka för nya instrument första terminen)</li>
-                        <li><strong>Uppvärmning:</strong> ${config.warmupMinPerDay} min/dag per instrument</li>
-                        <li><strong>Rengöring:</strong> Enligt dina angivelser per instrument</li>
-                        <li><strong>Förberedelse:</strong> ${config.prepMinPerWeek} min/vecka (${config.prepMinPerWeekNew} min/vecka för nya former)</li>
-                        <li><strong>Produktion:</strong> ${config.productionHours} h/år för projektveckor</li>
-                        <li><strong>Lovverksamhet:</strong> ${config.lovHours} h/år (sportlov, påsklov, höstlov, sommarlov)</li>
-                        <li><strong>Övrig tid:</strong> Planering, admin, möten, kompetensutveckling</li>
-                    </ul>
-                </div>
-            `;
-        }
-        
-        function formatInstName(inst) {
-            const names = {
-                'trumset': '🥁 Trumset',
-                'mallets': '🎼 Mallets',
-                'slagverk-ovrigt': '🎵 Övrigt slagverk',
-                'trumpet': '🎺 Trumpet',
-                'trombon': '🎺 Trombon',
-                'valthorn': '🎺 Valthorn',
-                'bariton': '🎺 Bariton',
-                'tuba': '🎺 Tuba',
-                'tvarflöjt': '🎵 Tvärflöjt',
-                'klarinett': '🎵 Klarinett',
-                'saxofon': '🎵 Saxofon',
-                'gitarr': '🎸 Gitarr',
-                'elbas': '🎸 Elbas',
-                'piano': '🎹 Piano',
-                'sang': '🎤 Sång',
-                'teater': '🎭 Teater',
-                'bild': '🎨 Bild'
-            };
-            return names[inst] || inst;
-        }
-        
-        function formatLessonName(lesson) {
-            const names = {
-                'instrument': '🎼 Instrumentlektion',
-                'orkester': '🎻 Orkester',
-                'kör': '🎤 Kör',
-                'band': '🎸 Band (rockband)',
-                'blas': '🎺 Blåsensemble',
-                'sangensemble': '🎤 Sångensemble'
-            };
-            return names[lesson] || lesson;
-        }
-        
-        function formatEmploymentName(employment) {
-            const names = {
-                'slagverk': 'Slagverkslärare',
-                'brass': 'Brasslärare',
-                'trablas': 'Träblåslärare',
-                'gitarr': 'Gitarrlärare',
-                'elbas': 'Elbaslärare',
-                'piano': 'Pianolärare',
-                'sang': 'Sånglärare',
-                'teater': 'Teaterlärare',
-                'bild': 'Bildlärare'
-            };
-            return names[employment] || employment;
-        }
-        
-        function resetConfig() {
-            document.getElementById('configYearHours').value = defaultConfig.yearHours;
-            document.getElementById('configMusicHoursPerDay').value = defaultConfig.musicHoursPerDay;
-            document.getElementById('configArtHoursPerDay').value = defaultConfig.artHoursPerDay;
-            document.getElementById('configCourseWeeks').value = defaultConfig.courseWeeks;
-            document.getElementById('configWarmupMin').value = defaultConfig.warmupMinPerDay;
-            document.getElementById('configPracticeMin').value = defaultConfig.practiceMinPerWeek;
-            document.getElementById('configPracticeMinNew').value = defaultConfig.practiceMinPerWeekNew;
-            document.getElementById('configPrepMin').value = defaultConfig.prepMinPerWeek;
-            document.getElementById('configPrepMinNew').value = defaultConfig.prepMinPerWeekNew;
-            document.getElementById('configProductionHours').value = defaultConfig.productionHours;
-            document.getElementById('configLovHours').value = defaultConfig.lovHours;
-            document.getElementById('configTermsPerYear').value = defaultConfig.termsPerYear;
-            
-            alert('✅ Standardvärden återställda!');
-        }
-    </script>
-</body>
-</html>
+                totalCleaningHours +
