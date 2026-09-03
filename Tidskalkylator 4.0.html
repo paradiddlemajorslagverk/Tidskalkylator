@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kulturskola – Arbetstids- & Belastningskalkylator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        
+        .instrument-list {
+            margin-top: 15px;
+        }
+        
+        .instrument-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .instrument-item select {
+            width: 200px;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .results-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .results-panel h2 {
+            color: white;
+            border-bottom-color: rgba(255,255,255,0.3);
+        }
+        
+        .result-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid rgba(255,255,255,0.5);
+        }
+        
+        .result-card h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        .result-value {
+            font-size: 2em;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .result-bar {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            height: 30px;
+            margin: 15px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .result-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        .result-bar-fill.warning {
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .result-bar-fill.danger {
+            background: linear-gradient(90deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        .time-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .time-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .time-item-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .time-item-value {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        
+        .alert-box {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .alert-box.success {
+            border-color: #4facfe;
+            background: rgba(79, 172, 254, 0.2);
+        }
+        
+        .alert-box.warning {
+            border-color: #f5576c;
+            background: rgba(245, 87, 108, 0.2);
+        }
+        
+        .instrument-load {
+            margin-top: 15px;
+        }
+        
+        .instrument-load-item {
+            background: rgba(255,255,255,0.1);
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .tab {
+            padding: 12px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .tab.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .parameter-info {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 Kulturskola – Arbetstidskalkylator</h1>
+            <p>Individuell belastningsberäkning för lärare</p>
+        </header>
+        
+        <div class="main-content">
+            <!-- VÄNSTER PANELEN - INPUT -->
+            <div class="input-panel">
+                
+                <!-- Tabs för navigation -->
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('teacher')">Lärare</div>
+                    <div class="tab" onclick="switchTab('instruments')">Instrument</div>
+                    <div class="tab" onclick="switchTab('config')">Inställningar</div>
+                </div>
+                
+                <!-- TAB 1: LÄRARE -->
+                <div id="tab-teacher" class="tab-content active section">
+                    <h2>👤 Läraruppgifter</h2>
+                    
+                    <div class="form-group">
+                        <label>Namn:</label>
+                        <input type="text" id="teacherName" placeholder="Ange lärarens namn" value="Anna Andersson">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Ämne:</label>
+                        <select id="teacherSubject">
+                            <option value="musik">Musik</option>
+                            <option value="konst">Konst</option>
+                            <option value="teater">Teater</option>
+                            <option value="sang">Sång</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tjänstegrad (%):</label>
+                        <select id="serviceGrade">
+                            <option value="100">100% (heltid)</option>
+                            <option value="80">80%</option>
+                            <option value="75">75%</option>
+                            <option value="60">60%</option>
+                            <option value="50">50%</option>
+                            <option value="40">40%</option>
+                            <option value="30">30%</option>
+                            <option value="25">25%</option>
+                            <option value="20">20%</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Antal instrument:</label>
+                        <input type="number" id="numInstruments" min="1" max="10" value="3">
+                    </div>
+                    
+                    <button class="btn" onclick="addInstrument()">+ Lägg till instrument</button>
+                    
+                    <div id="instrumentList" class="instrument-list">
+                        <!-- Instrument fylls i här -->
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label>Antal event per år:</label>
+                        <input type="number" id="numEvents" min="0" max="10" value="4">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Antal produktionsveckor:</label>
+                        <input type="number" id="numProductionWeeks" min="0" max="4" value="2">
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="calculate()" style="width: 100%; margin-top: 20px; padding: 15px;">
+                        🧮 BERÄKNA BELASTNING
+                    </button>
+                </div>
+                
+                <!-- TAB 2: INSTRUMENT -->
+                <div id="tab-instruments" class="tab-content section">
+                    <h2>🥁 Instrumentkonfiguration</h2>
+                    <p style="margin-bottom: 15px; color: #666;">Välj vilka instrument denna lärare ansvarar för:</p>
+                    
+                    <div id="instrumentSelector">
+                        <!-- Fylls i dynamiskt -->
+                    </div>
+                </div>
+                
+                <!-- TAB 3: KONFIGURATION -->
+                <div id="tab-config" class="tab-content section">
+                    <h2>⚙️ Systeminställningar</h2>
+                    <p style="margin-bottom: 15px; color: #666;">Alla parametrar är redigerbara per installation:</p>
+                    
+                    <div class="config-grid">
+                        <div class="form-group">
+                            <label>Årsram (timmar):</label>
+                            <input type="number" id="configYearHours" value="1880">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Musik: Undervisning h/dag:</label>
+                            <input type="number" id="configMusicHoursPerDay" value="4.0" step="0.1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Konst/Teater: Undervisning h/dag:</label>
+                            <input type="number" id="configArtHoursPerDay" value="3.6" step="0.1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Kursperiod (veckor):</label>
+                            <input type="number" id="configCourseWeeks" value="25">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Uppvärmning per instrument (min/dag):</label>
+                            <input type="number" id="configWarmupMin" value="15">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Event: Förberedelse (dagar):</label>
+                            <input type="number" id="configEventPrepDays" value="2">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Produktionsvecka (timmar):</label>
+                            <input type="number" id="configProductionWeekHours" value="20">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Repertoar (min/vecka):</label>
+                            <input type="number" id="configRepertoireMin" value="60">
+                        </div>
+                    </div>
+                    
+                    <div class="parameter-info">
+                        <strong>💡 Tips:</strong> Ändra dessa värden för att anpassa kalkylatorn till er lokala verksamhet. Alla beräkningar uppdateras automatiskt.
+                    </div>
+                    
+                    <button class="btn" onclick="resetConfig()" style="margin-top: 15px;">
+                        🔄 Återställ standardvärden
+                    </button>
+                </div>
+                
+            </div>
+            
+            <!-- HÖGER PANELEN - RESULTAT -->
+            <div class="results-panel">
+                <h2>📊 Belastningsresultat</h2>
+                
+                <div id="resultsContent">
+                    <p style="text-align: center; padding: 40px; opacity: 0.8;">
+                        Fyll i läraruppgifter och klicka på "BERÄKNA BELASTNING" för att se resultat.
+                    </p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ============================================
+        // KONFIGURATION - STANDARDVÄRDEN
+        // ============================================
+        const defaultConfig = {
+            yearHours: 1880,
+            musicHoursPerDay: 4.0,
+            artHoursPerDay: 3.6,
+            courseWeeks: 25,
+            warmupMinPerInstrument: 15,
+            eventPrepDays: 2,
+            productionWeekHours: 20,
+            repertoireMinPerWeek: 60
+        };
+        
+        // Instrument med övningskrav (timmar/vecka)
+        const instruments = [
+            { name: 'Trumset', practiceHours: 75 },
+            { name: 'Marimba/Xylofon', practiceHours: 105 },
+            { name: 'Timpani', practiceHours: 45 },
+            { name: 'Congas/Percussion', practiceHours: 45 },
+            { name: 'Elbas', practiceHours: 45 },
+            { name: 'Piano (stöd)', practiceHours: 30 },
+            { name: 'Gitarr', practiceHours: 45 },
+            { name: 'Saxofon', practiceHours: 45 },
+            { name: 'Trumpet', practiceHours: 45 },
+            { name: 'Posaun', practiceHours: 45 },
+            { name: 'Violin', practiceHours: 60 },
+            { name: 'Cello', practiceHours: 60 },
+            { name: 'Flöjt', practiceHours: 45 },
+            { name: 'Oboe', practiceHours: 45 },
+            { name: 'Klarinett', practiceHours: 45 }
+        ];
+        
+        let selectedInstruments = [];
+        
+        // ============================================
+        // INITIERING
+        // ============================================
+        window.onload = function() {
+            renderInstrumentSelector();
+            updateInstrumentList();
+        };
+        
+        // ============================================
+        // TAB-HANTERING
+        // ============================================
+        function switchTab(tabName) {
+            // Ta bort active från alla tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Lägg till active på vald tab
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+        
+        // ============================================
+        // INSTRUMENT-HANTERING
+        // ============================================
+        function renderInstrumentSelector() {
+            const container = document.getElementById('instrumentSelector');
+            container.innerHTML = '';
+            
+            instruments.forEach((inst, index) => {
+                const div = document.createElement('div');
+                div.className = 'instrument-item';
+                div.innerHTML = `
+                    <span><strong>${inst.name}</strong> – ${inst.practiceHours} min/vecka</span>
+                    <label>
+                        <input type="checkbox" onchange="toggleInstrument(${index})" 
+                               ${selectedInstruments.includes(index) ? 'checked' : ''}>
+                    </label>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function toggleInstrument(index) {
+            if (selectedInstruments.includes(index)) {
+                selectedInstruments = selectedInstruments.filter(i => i !== index);
+            } else {
+                selectedInstruments.push(index);
+            }
+            updateInstrumentList();
+        }
+        
+        function updateInstrumentList() {
+            const container = document.getElementById('instrumentList');
+            container.innerHTML = '';
+            
+            if (selectedInstruments.length === 0) {
+                container.innerHTML = '<p style="color: #999; font-style: italic;">Inga instrument valda än.</p>';
+                return;
+            }
+            
+            selectedInstruments.forEach((index, pos) => {
+                const inst = instruments[index];
+                const div = document.createElement('div');
+                div.className = 'instrument-item';
+                div.innerHTML = `
+                    <span><strong>${inst.name}</strong> – ${inst.practiceHours} min/vecka</span>
+                    <button class="btn btn-danger" onclick="removeInstrument(${pos})" style="padding: 5px 10px; font-size: 0.8em;">
+                        ✕
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function addInstrument() {
+            // Öppna instrument-tabben automatiskt
+            document.querySelectorAll('.tab').forEach((tab, i) => {
+                if (i === 1) tab.click();
+            });
+        }
+        
+        function removeInstrument(pos) {
+            selectedInstruments.splice(pos, 1);
+            renderInstrumentSelector();
+            updateInstrumentList();
+        }
+        
+        // ============================================
+        // BERÄKNINGSKÄRNA
+        // ============================================
+        function calculate() {
+            // Hämta konfiguration
+            const config = {
+                yearHours: parseFloat(document.getElementById('configYearHours').value) || defaultConfig.yearHours,
+                musicHoursPerDay: parseFloat(document.getElementById('configMusicHoursPerDay').value) || defaultConfig.musicHoursPerDay,
+                artHoursPerDay: parseFloat(document.getElementById('configArtHoursPerDay').value) || defaultConfig.artHoursPerDay,
+                courseWeeks: parseFloat(document.getElementById('configCourseWeeks').value) || defaultConfig.courseWeeks,
+                warmupMinPerInstrument: parseFloat(document.getElementById('configWarmupMin').value) || defaultConfig.warmupMinPerInstrument,
+                eventPrepDays: parseFloat(document.getElementById('configEventPrepDays').value) || defaultConfig.eventPrepDays,
+                productionWeekHours: parseFloat(document.getElementById('configProductionWeekHours').value) || defaultConfig.productionWeekHours,
+                repertoireMinPerWeek: parseFloat(document.getElementById('configRepertoireMin').value) || defaultConfig.repertoireMinPerWeek
+            };
+            
+            // Hämta lärardata
+            const teacherName = document.getElementById('teacherName').value || 'Okänd lärare';
+            const subject = document.getElementById('teacherSubject').value;
+            const serviceGrade = parseFloat(document.getElementById('serviceGrade').value) / 100;
+            const numEvents = parseInt(document.getElementById('numEvents').value) || 0;
+            const numProductionWeeks = parseInt(document.getElementById('numProductionWeeks').value) || 0;
+            
+            // Beräkna tillgänglig tid
+            const availableHours = config.yearHours * serviceGrade;
+            
+            // Beräkna undervisningstid
+            const teachingHoursPerDay = subject === 'musik' ? config.musicHoursPerDay : config.artHoursPerDay;
+            const teachingDays = config.courseWeeks * 5; // 5 dagar/vecka
+            const totalTeachingHours = teachingHoursPerDay * teachingDays;
+            
+            // Beräkna instrumentbelastning
+            let totalPracticeHours = 0;
+            let totalWarmupHours = 0;
+            const instrumentBreakdown = [];
+            
+            selectedInstruments.forEach(index => {
+                const inst = instruments[index];
+                const practiceHours = inst.practiceHours / 60 * config.courseWeeks; // omvandla min/vecka till timmar/år
+                const warmupHours = (config.warmupMinPerInstrument / 60) * teachingDays; // 15 min/dag -> timmar/år
+                
+                totalPracticeHours += practiceHours;
+                totalWarmupHours += warmupHours;
+                
+                instrumentBreakdown.push({
+                    name: inst.name,
+                    practice: practiceHours,
+                    warmup: warmupHours,
+                    total: practiceHours + warmupHours
+                });
+            });
+            
+            // Beräkna event-tid
+            const eventHours = numEvents * config.eventPrepDays * 8; // 8 timmars arbetsdag
+            
+            // Beräkna produktionsveckor
+            const productionHours = numProductionWeeks * config.productionWeekHours;
+            
+            // Repertoar
+            const repertoireHours = (config.repertoireMinPerWeek / 60) * config.courseWeeks;
+            
+            // Övrig tid (möten, admin, planering etc.)
+            // Enligt spec: ~850-900 h för 100% tjänst
+            const otherHoursBase = 875 * serviceGrade;
+            
+            // TOTALT
+            const totalRequiredHours = 
+                totalTeachingHours + 
+                totalPracticeHours + 
+                totalWarmupHours + 
+                eventHours + 
+                productionHours + 
+                repertoireHours + 
+                otherHoursBase;
+            
+            const balance = availableHours - totalRequiredHours;
+            const utilizationPercent = (totalRequiredHours / availableHours) * 100;
+            
+            // ============================================
+            // RENDERA RESULTAT
+            // ============================================
+            const resultsDiv = document.getElementById('resultsContent');
+            
+            let alertClass = 'success';
+            let alertMessage = '';
+            let alertTitle = '';
+            
+            if (balance > 0) {
+                alertClass = 'success';
+                alertTitle = '✅ Tjänsten går ihop!';
+                alertMessage = `Det finns <strong>${balance.toFixed(0)} timmar</strong> kvar i budgeten. Tjänsten är hållbar.`;
+            } else if (balance > -200) {
+                alertClass = 'warning';
+                alertTitle = '⚠️ Gränsfall – tjänsten är stram';
+                alertMessage = `Det saknas <strong>${Math.abs(balance).toFixed(0)} timmar</strong>. Överväg att minska belastningen.`;
+            } else {
+                alertClass = 'warning';
+                alertTitle = '❌ Tjänsten går INTE ihop!';
+                alertMessage = `Det saknas <strong>${Math.abs(balance).toFixed(0)} timmar</strong>. Denna tjänst är inte hållbar i nuvarande form.`;
+            }
+            
+            // Bygg instrumentlista HTML
+            let instrumentHTML = '';
+            if (instrumentBreakdown.length > 0) {
+                instrumentHTML = '<div class="instrument-load">';
+                instrumentBreakdown.forEach(inst => {
+                    instrumentHTML += `
+                        <div class="instrument-load-item">
+                            <span><strong>${inst.name}</strong></span>
+                            <span>${inst.total.toFixed(0)} h/år 
+                                <small style="opacity:0.7">(${inst.practice.toFixed(0)} h övning + ${inst.warmup.toFixed(0)} h uppvärmning)</small>
+                            </span>
+                        </div>
+                    `;
+                });
+                instrumentHTML += '</div>';
+            } else {
+                instrumentHTML = '<p style="opacity:0.7; font-style:italic;">Inga instrument valda.</p>';
+            }
+            
+            // Huvudresultat
+            resultsDiv.innerHTML = `
+                <div class="result-card">
+                    <h3>👤 ${teacherName}</h3>
+                    <p style="opacity:0.9;">${subject.toUpperCase()} | ${serviceGrade * 100}% tjänst</p>
+                </div>
+                
+                <div class="result-card">
+                    <h3>⏱️ Total årsbelastning</h3>
+                    <div class="result-value">${totalRequiredHours.toFixed(0)} h / ${availableHours.toFixed(0)} h</div>
+                    <div class="result-bar">
+                        <div class="result-bar-fill ${utilizationPercent > 100 ? 'warning' : ''} ${utilizationPercent > 120 ? 'danger' : ''}" 
+                             style="width: ${Math.min(utilizationPercent, 100)}%;">
+                            ${utilizationPercent.toFixed(0)}%
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert-box ${alertClass}">
+                    <h3 style="margin-bottom: 10px;">${alertTitle}</h3>
+                    <p>${alertMessage}</p>
+                </div>
+                
+                <div class="result-card" style="margin-top: 20px;">
+                    <h3>📋 Tidsfördelning</h3>
+                    <div class="time-breakdown">
+                        <div class="time-item">
+                            <div class="time-item-label">Undervisning</div>
+                            <div class="time-item-value">${totalTeachingHours.toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Instrument (övning + uppvärmning)</div>
+                            <div class="time-item-value">${(totalPracticeHours + totalWarmupHours).toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Event</div>
+                            <div class="time-item-value">${eventHours.toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Produktion</div>
+                            <div class="time-item-value">${productionHours.toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Repertoar</div>
+                            <div class="time-item-value">${repertoireHours.toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Övrig tid</div>
+                            <div class="time-item-value">${otherHoursBase.toFixed(0)} h</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-card" style="margin-top: 20px;">
+                    <h3>🥁 Instrumentbelastning</h3>
+                    ${instrumentHTML}
+                    <p style="margin-top: 15px; opacity: 0.9;">
+                        <strong>Totalt:</strong> ${(totalPracticeHours + totalWarmupHours).toFixed(0)} timmar/år 
+                        för ${selectedInstruments.length} instrument
+                    </p>
+                </div>
+                
+                <div class="result-card" style="margin-top: 20px;">
+                    <h3>🎯 Nyckeltal</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                        <div>
+                            <strong>Undervisning:</strong> ${totalTeachingHours.toFixed(0)} h/år<br>
+                            <strong>Per vecka (kursperiod):</strong> ${(totalTeachingHours / config.courseWeeks).toFixed(1)} h
+                        </div>
+                        <div>
+                            <strong>Instrument:</strong> ${selectedInstruments.length} st<br>
+                            <strong>Övning per instrument:</strong> ${selectedInstruments.length > 0 ? (totalPracticeHours / selectedInstruments.length).toFixed(0) : 0} h/år
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert-box" style="margin-top: 20px; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3);">
+                    <h4 style="margin-bottom: 10px;">💡 Vad betyder detta?</h4>
+                    <ul style="padding-left: 20px; line-height: 1.6;">
+                        <li><strong>Undervisning:</strong> Faktisk lektionstid med elever under kursperioden</li>
+                        <li><strong>Instrument:</strong> Summan av övningstid + uppvärmning för alla instrument</li>
+                        <li><strong>Event:</strong> Förberedelse och genomförande av konserter/visningar</li>
+                        <li><strong>Produktion:</strong> Projektveckor för samverkan och utveckling</li>
+                        <li><strong>Repertoar:</strong> Tid för att lära in och underhålla musikstycken</li>
+                        <li><strong>Övrig tid:</strong> Planering, admin, möten, kompetensutveckling, elevkontakt</li>
+                    </ul>
+                </div>
+            `;
+        }
+        
+        // ============================================
+        // KONFIGURATION - RESET
+        // ============================================
+        function resetConfig() {
+            document.getElementById('configYearHours').value = defaultConfig.yearHours;
+            document.getElementById('configMusicHoursPerDay').value = defaultConfig.musicHoursPerDay;
+            document.getElementById('configArtHoursPerDay').value = defaultConfig.artHoursPerDay;
+            document.getElementById('configCourseWeeks').value = defaultConfig.courseWeeks;
+            document.getElementById('configWarmupMin').value = defaultConfig.warmupMinPerInstrument;
+            document.getElementById('configEventPrepDays').value = defaultConfig.eventPrepDays;
+            document.getElementById('configProductionWeekHours').value = defaultConfig.productionWeekHours;
+            document.getElementById('configRepertoireMin').value = defaultConfig.repertoireMinPerWeek;
+            
+            alert('✅ Standardvärden återställda!');
+        }
+    </script>
+</body>
+</html>
