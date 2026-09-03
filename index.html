@@ -1205,4 +1205,270 @@
                 totalTeachingHours + 
                 totalPracticeHours + 
                 totalWarmupHours + 
-                totalCleaningHours +
+                totalCleaningHours + 
+                totalPrepHours + 
+                totalMaintenanceHours + 
+                totalExtraHours + 
+                config.productionHours + 
+                config.lovHours + 
+                otherHoursBase;
+            
+            const balance = availableHours - totalRequiredHours;
+            const utilizationPercent = (totalRequiredHours / availableHours) * 100;
+            
+            // Render results
+            const resultsDiv = document.getElementById('resultsContent');
+            
+            let alertClass = 'success';
+            let alertMessage = '';
+            let alertTitle = '';
+            
+            if (balance > 0) {
+                alertClass = 'success';
+                alertTitle = '✅ Tjänsten går ihop!';
+                alertMessage = `Det finns <strong>${balance.toFixed(0)} timmar</strong> kvar i budgeten.`;
+            } else if (balance > -200) {
+                alertClass = 'warning';
+                alertTitle = '⚠️ Gränsfall – tjänsten är stram';
+                alertMessage = `Det saknas <strong>${Math.abs(balance).toFixed(0)} timmar</strong>.`;
+            } else {
+                alertClass = 'warning';
+                alertTitle = '❌ Tjänsten går INTE ihop!';
+                alertMessage = `Det saknas <strong>${Math.abs(balance).toFixed(0)} timmar</strong>.`;
+            }
+            
+            // Instrumentlista
+            let instrumentHTML = '';
+            if (instrumentBreakdown.length > 0) {
+                instrumentHTML = '<div style="margin-top: 15px;">';
+                instrumentBreakdown.forEach(inst => {
+                    const newBadge = inst.isNew ? '<span style="background: #f5576c; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75em; margin-left: 5px;">NY</span>' : '';
+                    instrumentHTML += `
+                        <div style="background: rgba(255,255,255,0.1); padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <span><strong>${inst.name}</strong>${newBadge}</span>
+                            <span>${inst.total.toFixed(0)} h/år 
+                                <small style="opacity:0.7">(${inst.practice.toFixed(0)} h övning + ${inst.warmup.toFixed(0)} h uppvärmning + ${inst.cleaning.toFixed(0)} h rengöring)</small>
+                            </span>
+                        </div>
+                    `;
+                });
+                instrumentHTML += '</div>';
+            }
+            
+            // Underhåll
+            let maintenanceHTML = '';
+            if (maintenanceBreakdown.length > 0) {
+                maintenanceHTML = '<div style="margin-top: 15px;">';
+                maintenanceBreakdown.forEach(item => {
+                    maintenanceHTML += `
+                        <div style="background: rgba(255,255,255,0.1); padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                            <span>${item.name}</span>
+                            <span>${item.hours.toFixed(0)} h/år</span>
+                        </div>
+                    `;
+                });
+                maintenanceHTML += `
+                    <div style="background: rgba(255,255,255,0.1); padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-weight: 600;">
+                        <span>⏰ Förberedelse terminsstart (${prepDays} dagar × ${config.termsPerYear} terminer)</span>
+                        <span>${prepHoursYear.toFixed(0)} h/år</span>
+                    </div>
+                `;
+                maintenanceHTML += '</div>';
+            }
+            
+            resultsDiv.innerHTML = `
+                <div class="result-card">
+                    <h3>💼 ${formatEmploymentName(mainEmployment)}</h3>
+                    <p style="opacity:0.9;">${serviceGrade * 100}% tjänst | ${instrumentBreakdown.length} instrument | ${totalLessonsPerWeek} lektioner/vecka</p>
+                </div>
+                
+                <div class="result-card">
+                    <h3>⏱️ Total årsbelastning</h3>
+                    <div class="result-value">${totalRequiredHours.toFixed(0)} h / ${availableHours.toFixed(0)} h</div>
+                    <div class="result-bar">
+                        <div class="result-bar-fill ${utilizationPercent > 100 ? 'warning' : ''} ${utilizationPercent > 120 ? 'danger' : ''}" 
+                             style="width: ${Math.min(utilizationPercent, 100)}%;">
+                            ${utilizationPercent.toFixed(0)}%
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert-box ${alertClass}">
+                    <h3 style="margin-bottom: 10px;">${alertTitle}</h3>
+                    <p>${alertMessage}</p>
+                </div>
+                
+                <div class="result-card" style="margin-top: 20px;">
+                    <h3>📋 Tidsfördelning</h3>
+                    <div class="time-breakdown">
+                        <div class="time-item">
+                            <div class="time-item-label">Undervisning</div>
+                            <div class="time-item-value">${totalTeachingHours.toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Övning</div>
+                            <div class="time-item-value">${totalPracticeHours.toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Uppvärmning</div>
+                            <div class="time-item-value">${totalWarmupHours.toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Rengöring</div>
+                            <div class="time-item-value">${totalCleaningHours.toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Förberedelse</div>
+                            <div class="time-item-value">${totalPrepHours.toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Underhåll</div>
+                            <div class="time-item-value">${totalMaintenanceHours.toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Extra</div>
+                            <div class="time-item-value">${totalExtraHours.toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Produktion</div>
+                            <div class="time-item-value">${config.productionHours.toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Lov</div>
+                            <div class="time-item-value">${config.lovHours.toFixed(0)} h</div>
+                        </div>
+                        <div class="time-item">
+                            <div class="time-item-label">Övrigt</div>
+                            <div class="time-item-value">${otherHoursBase.toFixed(0)} h</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-card" style="margin-top: 20px;">
+                    <h3>🎼 Instrument du undervisar i</h3>
+                    ${instrumentHTML}
+                    <p style="margin-top: 15px; opacity: 0.9;">
+                        <strong>Totalt:</strong> ${(totalPracticeHours + totalWarmupHours + totalCleaningHours).toFixed(0)} timmar/år 
+                        för ${instrumentBreakdown.length} instrument
+                    </p>
+                </div>
+                
+                <div class="result-card" style="margin-top: 20px;">
+                    <h3>🔧 Instrumentansvar (underhåll)</h3>
+                    ${maintenanceHTML}
+                    <p style="margin-top: 15px; opacity: 0.9;">
+                        <strong>Totalt:</strong> ${totalMaintenanceHours.toFixed(0)} timmar/år
+                    </p>
+                </div>
+                
+                <div class="result-card" style="margin-top: 20px;">
+                    <h3>📚 Lektioner per vecka</h3>
+                    <div style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 6px;">
+                            <strong>Totalt:</strong> ${totalLessonsPerWeek} lektioner/vecka
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 6px;">
+                            <strong>Förberedelse:</strong> ${totalPrepHours.toFixed(0)} h/år (${config.prepMinPerLesson} min/lektion)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-card" style="margin-top: 20px;">
+                    <h3>📋 Extra uppgifter</h3>
+                    <div style="margin-top: 10px;">
+                        <div style="background: rgba(255,255,255,0.1); padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                            <span>🎼 Partiturstudier</span>
+                            <span>${extraPartiturHours.toFixed(0)} h/år</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                            <span>✍️ Arrangering</span>
+                            <span>${extraArrangemangHours.toFixed(0)} h/år</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert-box" style="margin-top: 20px; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3);">
+                    <h4 style="margin-bottom: 10px;">💡 Vad betyder detta?</h4>
+                    <ul style="padding-left: 20px; line-height: 1.6;">
+                        <li><strong>Undervisning:</strong> Lektionstid med elever (${config.courseWeeks} veckor)</li>
+                        <li><strong>Övning:</strong> ${config.practiceMinPerWeek} min/vecka (${config.practiceMinPerWeekNew} min/vecka för nya instrument)</li>
+                        <li><strong>Uppvärmning:</strong> ${config.warmupMinPerDay} min/dag per instrument</li>
+                        <li><strong>Rengöring:</strong> Enligt dina angivelser per instrument</li>
+                        <li><strong>Förberedelse:</strong> ${config.prepMinPerLesson} min per lektion × ${totalLessonsPerWeek} lektioner/vecka</li>
+                        <li><strong>Underhåll:</strong> Enligt antal instrument du har ansvar för</li>
+                        <li><strong>Produktion:</strong> ${config.productionHours} h/år för projektveckor</li>
+                        <li><strong>Lov:</strong> ${config.lovHours} h/år (sportlov, påsklov, höstlov, sommarlov)</li>
+                        <li><strong>Övrigt:</strong> Planering, admin, möten, kompetensutveckling</li>
+                    </ul>
+                </div>
+            `;
+        }
+        
+        function formatInstName(inst) {
+            const names = {
+                'trumset': '🥁 Trumset',
+                'mallets': '🎼 Mallets',
+                'slagverk-ovrigt': '🎵 Övrigt slagverk',
+                'trumpet': '🎺 Trumpet',
+                'trombon': '🎺 Trombon',
+                'valthorn': '🎺 Valthorn',
+                'bariton': '🎺 Bariton',
+                'tuba': '🎺 Tuba',
+                'tvarflöjt': '🎵 Tvärflöjt',
+                'klarinett': '🎵 Klarinett',
+                'saxofon': '🎵 Saxofon',
+                'gitarr': '🎸 Gitarr',
+                'elbas': '🎸 Elbas',
+                'piano': '🎹 Piano',
+                'sang': '🎤 Sång',
+                'teater': '🎭 Teater',
+                'bild': '🎨 Bild'
+            };
+            return names[inst] || inst;
+        }
+        
+        function formatMaintName(inst) {
+            const names = {
+                'trumset': '🥁 Trumset',
+                'elbas': '🎸 Elbas',
+                'gitarr': '🎸 Gitarr',
+                'mallets': '🎼 Mallets',
+                'trablas': '🎵 Träblås',
+                'piano': '🎹 Piano'
+            };
+            return names[inst] || inst;
+        }
+        
+        function formatEmploymentName(employment) {
+            const names = {
+                'slagverk': 'Slagverkslärare',
+                'brass': 'Brasslärare',
+                'trablas': 'Träblåslärare',
+                'gitarr': 'Gitarrlärare',
+                'elbas': 'Elbaslärare',
+                'piano': 'Pianolärare',
+                'sang': 'Sånglärare',
+                'teater': 'Teaterlärare',
+                'bild': 'Bildlärare'
+            };
+            return names[employment] || employment;
+        }
+        
+        function resetConfig() {
+            document.getElementById('configYearHours').value = defaultConfig.yearHours;
+            document.getElementById('configMusicHoursPerDay').value = defaultConfig.musicHoursPerDay;
+            document.getElementById('configArtHoursPerDay').value = defaultConfig.artHoursPerDay;
+            document.getElementById('configCourseWeeks').value = defaultConfig.courseWeeks;
+            document.getElementById('configWarmupMin').value = defaultConfig.warmupMinPerDay;
+            document.getElementById('configPracticeMin').value = defaultConfig.practiceMinPerWeek;
+            document.getElementById('configPracticeMinNew').value = defaultConfig.practiceMinPerWeekNew;
+            document.getElementById('configPrepMin').value = defaultConfig.prepMinPerLesson;
+            document.getElementById('configProductionHours').value = defaultConfig.productionHours;
+            document.getElementById('configLovHours').value = defaultConfig.lovHours;
+            document.getElementById('configTermsPerYear').value = defaultConfig.termsPerYear;
+            
+            alert('✅ Standardvärden återställda!');
+        }
+    </script>
+</body>
+</html>
