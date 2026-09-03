@@ -431,15 +431,15 @@
             </div>
             
             <div class="tabs">
-                <div class="tab active" onclick="switchTab('employment')">Anställning</div>
-                <div class="tab" onclick="switchTab('instruments')">Instrument</div>
-                <div class="tab" onclick="switchTab('lessons')">Lektioner</div>
-                <div class="tab" onclick="switchTab('maintenance')">Instrumentansvar</div>
-                <div class="tab" onclick="switchTab('extra')">Extra</div>
-                <div class="tab" onclick="switchTab('config')">Inställningar</div>
+                <div class="tab active" data-tab="employment">Anställning</div>
+                <div class="tab" data-tab="instruments">Instrument</div>
+                <div class="tab" data-tab="lessons">Lektioner</div>
+                <div class="tab" data-tab="maintenance">Instrumentansvar</div>
+                <div class="tab" data-tab="extra">Extra</div>
+                <div class="tab" data-tab="config">Inställningar</div>
             </div>
             
-            <div id="tab-employment" class="tab-content active section">
+            <div id="employment" class="tab-content active">
                 <h2>Anställning</h2>
                 
                 <div class="form-group">
@@ -473,7 +473,7 @@
                 </div>
             </div>
             
-            <div id="tab-instruments" class="tab-content section">
+            <div id="instruments" class="tab-content">
                 <h2>Instrument du undervisar i</h2>
                 <p style="margin-bottom: 20px; color: #666; font-size: 0.95em;">Välj alla instrument du undervisar i:</p>
                 
@@ -671,7 +671,7 @@
                 </div>
             </div>
             
-            <div id="tab-lessons" class="tab-content section">
+            <div id="lessons" class="tab-content">
                 <h2>Lektioner & Ensembler</h2>
                 <p style="margin-bottom: 20px; color: #666; font-size: 0.95em;">Ange antal lektioner/ensembler per vecka:</p>
                 
@@ -765,7 +765,7 @@
                 </div>
             </div>
             
-            <div id="tab-maintenance" class="tab-content section">
+            <div id="maintenance" class="tab-content">
                 <h2>Instrumentansvar</h2>
                 <p style="margin-bottom: 20px; color: #666; font-size: 0.95em;">Ange antal instrument och tid för underhåll:</p>
                 
@@ -868,7 +868,7 @@
                 </div>
             </div>
             
-            <div id="tab-extra" class="tab-content section">
+            <div id="extra" class="tab-content">
                 <h2>Extra arbetsuppgifter</h2>
                 <p style="margin-bottom: 20px; color: #666; font-size: 0.95em;">Tid per vecka för extra uppgifter:</p>
                 
@@ -887,7 +887,7 @@
                 </div>
             </div>
             
-            <div id="tab-config" class="tab-content section">
+            <div id="config" class="tab-content">
                 <h2>Inställningar</h2>
                 <p style="margin-bottom: 20px; color: #666; font-size: 0.95em;">Alla parametrar är redigerbara:</p>
                 
@@ -993,16 +993,28 @@
             'sang', 'teater', 'bild'
         ];
         
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(function(tab) {
-                tab.classList.remove('active');
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                
+                // Remove active from all tabs
+                document.querySelectorAll('.tab').forEach(function(t) {
+                    t.classList.remove('active');
+                });
+                
+                // Remove active from all content
+                document.querySelectorAll('.tab-content').forEach(function(c) {
+                    c.classList.remove('active');
+                });
+                
+                // Add active to clicked tab
+                this.classList.add('active');
+                
+                // Show corresponding content
+                document.getElementById(tabName).classList.add('active');
             });
-            document.querySelectorAll('.tab-content').forEach(function(content) {
-                content.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            document.getElementById('tab-' + tabName).classList.add('active');
-        }
+        });
         
         function calculate() {
             const config = {
