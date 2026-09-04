@@ -773,13 +773,13 @@
                 
                 <div class="form-row">
                     <div class="number-input-group">
-                        <label>Trumpet (45 min/st/termin):</label>
+                        <label>Trumpet (45 min/st/termin, 90 min/år):</label>
                         <input type="number" id="maint-trumpet" value="0" min="0" onchange="calculate()">
                         <span>st</span>
                     </div>
                     
                     <div class="number-input-group">
-                        <label>Trombon (30 min/st/termin):</label>
+                        <label>Trombon (30 min/st/termin, 60 min/år):</label>
                         <input type="number" id="maint-trombon" value="0" min="0" onchange="calculate()">
                         <span>st</span>
                     </div>
@@ -787,13 +787,13 @@
                 
                 <div class="form-row">
                     <div class="number-input-group">
-                        <label>Valthorn (45 min/st/termin):</label>
+                        <label>Valthorn (45 min/st/termin, 90 min/år):</label>
                         <input type="number" id="maint-valthorn" value="0" min="0" onchange="calculate()">
                         <span>st</span>
                     </div>
                     
                     <div class="number-input-group">
-                        <label>Bariton (45 min/st/termin):</label>
+                        <label>Bariton (45 min/st/termin, 90 min/år):</label>
                         <input type="number" id="maint-bariton" value="0" min="0" onchange="calculate()">
                         <span>st</span>
                     </div>
@@ -801,7 +801,7 @@
                 
                 <div class="form-row">
                     <div class="number-input-group">
-                        <label>Tuba (120 min/st/termin):</label>
+                        <label>Tuba (120 min/st/termin, 240 min/år):</label>
                         <input type="number" id="maint-tuba" value="0" min="0" onchange="calculate()">
                         <span>st</span>
                     </div>
@@ -815,7 +815,7 @@
                         <input type="number" id="maint-trumset-count" value="0" min="0" onchange="calculate()">
                         <span>st ×</span>
                         <input type="number" id="maint-trumset-min" value="0" min="0" onchange="calculate()">
-                        <span>min/termin</span>
+                        <span>min/termin (×2 för helår)</span>
                     </div>
                     
                     <div class="number-input-group">
@@ -823,7 +823,7 @@
                         <input type="number" id="maint-elbas-count" value="0" min="0" onchange="calculate()">
                         <span>st ×</span>
                         <input type="number" id="maint-elbas-min" value="0" min="0" onchange="calculate()">
-                        <span>min/termin</span>
+                        <span>min/termin (×2 för helår)</span>
                     </div>
                 </div>
                 
@@ -833,7 +833,7 @@
                         <input type="number" id="maint-gitarr-count" value="0" min="0" onchange="calculate()">
                         <span>st ×</span>
                         <input type="number" id="maint-gitarr-min" value="0" min="0" onchange="calculate()">
-                        <span>min/termin</span>
+                        <span>min/termin (×2 för helår)</span>
                     </div>
                     
                     <div class="number-input-group">
@@ -841,7 +841,7 @@
                         <input type="number" id="maint-tvarflöjt-count" value="0" min="0" onchange="calculate()">
                         <span>st ×</span>
                         <input type="number" id="maint-tvarflöjt-min" value="0" min="0" onchange="calculate()">
-                        <span>min/termin</span>
+                        <span>min/termin (×2 för helår)</span>
                     </div>
                 </div>
                 
@@ -851,7 +851,7 @@
                         <input type="number" id="maint-klarinett-count" value="0" min="0" onchange="calculate()">
                         <span>st ×</span>
                         <input type="number" id="maint-klarinett-min" value="0" min="0" onchange="calculate()">
-                        <span>min/termin</span>
+                        <span>min/termin (×2 för helår)</span>
                     </div>
                     
                     <div class="number-input-group">
@@ -859,12 +859,12 @@
                         <input type="number" id="maint-saxofon-count" value="0" min="0" onchange="calculate()">
                         <span>st ×</span>
                         <input type="number" id="maint-saxofon-min" value="0" min="0" onchange="calculate()">
-                        <span>min/termin</span>
+                        <span>min/termin (×2 för helår)</span>
                     </div>
                 </div>
                 
                 <div class="parameter-info">
-                    <strong>Exempel:</strong> 6 trumset × 60 min/termin = 360 min/termin = 6 timmar/termin.
+                    <strong>Exempel:</strong> 6 trumset × 60 min/termin = 360 min/termin = 720 min/år = 12 h/år.
                 </div>
             </div>
             
@@ -898,13 +898,13 @@
                     </div>
                     
                     <div class="form-group">
-                        <label>Musik: Undervisning h/dag:</label>
-                        <input type="number" id="configMusicHoursPerDay" value="4.0" step="0.1" onchange="calculate()">
+                        <label>Musik: Undervisning h/vecka:</label>
+                        <input type="number" id="configMusicHoursPerWeek" value="20" step="0.5" onchange="calculate()">
                     </div>
                     
                     <div class="form-group">
-                        <label>Konst/Teater: Undervisning h/dag:</label>
-                        <input type="number" id="configArtHoursPerDay" value="3.6" step="0.1" onchange="calculate()">
+                        <label>Konst/Teater: Undervisning h/vecka:</label>
+                        <input type="number" id="configArtHoursPerWeek" value="18" step="0.5" onchange="calculate()">
                     </div>
                     
                     <div class="form-group">
@@ -970,8 +970,8 @@
     <script>
         const defaultConfig = {
             yearHours: 1880,
-            musicHoursPerDay: 4.0,
-            artHoursPerDay: 3.6,
+            musicHoursPerWeek: 20,
+            artHoursPerWeek: 18,
             courseWeeks: 25,
             warmupMinPerDay: 15,
             practiceMinPerWeek: 60,
@@ -1019,8 +1019,8 @@
         function calculate() {
             const config = {
                 yearHours: parseFloat(document.getElementById('configYearHours').value) || defaultConfig.yearHours,
-                musicHoursPerDay: parseFloat(document.getElementById('configMusicHoursPerDay').value) || defaultConfig.musicHoursPerDay,
-                artHoursPerDay: parseFloat(document.getElementById('configArtHoursPerDay').value) || defaultConfig.artHoursPerDay,
+                musicHoursPerWeek: parseFloat(document.getElementById('configMusicHoursPerWeek').value) || defaultConfig.musicHoursPerWeek,
+                artHoursPerWeek: parseFloat(document.getElementById('configArtHoursPerWeek').value) || defaultConfig.artHoursPerWeek,
                 courseWeeks: parseFloat(document.getElementById('configCourseWeeks').value) || defaultConfig.courseWeeks,
                 warmupMinPerDay: parseFloat(document.getElementById('configWarmupMin').value) || defaultConfig.warmupMinPerDay,
                 practiceMinPerWeek: parseFloat(document.getElementById('configPracticeMin').value) || defaultConfig.practiceMinPerWeek,
@@ -1038,9 +1038,8 @@
             const availableHours = config.yearHours * serviceGrade;
             
             const isArtSubject = ['teater', 'bild'].includes(mainEmployment);
-            const teachingHoursPerDay = isArtSubject ? config.artHoursPerDay : config.musicHoursPerDay;
-            const teachingDays = config.courseWeeks * 5;
-            const totalTeachingHours = teachingHoursPerDay * teachingDays;
+            const teachingHoursPerWeek = isArtSubject ? config.artHoursPerWeek : config.musicHoursPerWeek;
+            const totalTeachingHours = teachingHoursPerWeek * config.courseWeeks;
             
             let totalPracticeHours = 0;
             let totalWarmupHours = 0;
@@ -1051,7 +1050,7 @@
                     const isNew = document.getElementById('new-' + inst).checked;
                     const practiceMinPerWeek = isNew ? config.practiceMinPerWeekNew : config.practiceMinPerWeek;
                     const practiceHours = (practiceMinPerWeek / 60) * config.courseWeeks;
-                    const warmupHours = (config.warmupMinPerDay / 60) * teachingDays;
+                    const warmupHours = (config.warmupMinPerDay / 60) * config.courseWeeks * 5;
                     
                     totalPracticeHours += practiceHours;
                     totalWarmupHours += warmupHours;
@@ -1251,8 +1250,8 @@
         
         function resetConfig() {
             document.getElementById('configYearHours').value = defaultConfig.yearHours;
-            document.getElementById('configMusicHoursPerDay').value = defaultConfig.musicHoursPerDay;
-            document.getElementById('configArtHoursPerDay').value = defaultConfig.artHoursPerDay;
+            document.getElementById('configMusicHoursPerWeek').value = defaultConfig.musicHoursPerWeek;
+            document.getElementById('configArtHoursPerWeek').value = defaultConfig.artHoursPerWeek;
             document.getElementById('configCourseWeeks').value = defaultConfig.courseWeeks;
             document.getElementById('configWarmupMin').value = defaultConfig.warmupMinPerDay;
             document.getElementById('configPracticeMin').value = defaultConfig.practiceMinPerWeek;
