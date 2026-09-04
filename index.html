@@ -594,11 +594,25 @@
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Förberedelse (h/vecka):</label>
-                        <input type="number" id="configPrepHoursPerWeek" value="12.5" step="0.5" onchange="calculate()">
-                        <small>Enligt arbetsbeskrivning</small>
+                        <label>Uppvärmning (min/dag):</label>
+                        <input type="number" id="configWarmupMin" value="15" onchange="calculate()">
+                        <small>Per instrument</small>
                     </div>
                     
+                    <div class="form-group">
+                        <label>Övningstid (min/vecka):</label>
+                        <input type="number" id="configPracticeMin" value="60" onchange="calculate()">
+                        <small>Per instrument</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Övningstid nytt instrument (min/vecka):</label>
+                        <input type="number" id="configPracticeMinNew" value="90" onchange="calculate()">
+                        <small>Första terminen</small>
+                    </div>
+                </div>
+                
+                <div class="form-row">
                     <div class="form-group">
                         <label>Mötestid (h/vecka):</label>
                         <input type="number" id="configMeetingHoursPerWeek" value="2.5" step="0.5" onchange="calculate()">
@@ -610,9 +624,7 @@
                         <input type="number" id="configAPTHoursPerTerm" value="0" min="0" onchange="calculate()">
                         <small>Årsplanering per termin</small>
                     </div>
-                </div>
-                
-                <div class="form-row">
+                    
                     <div class="form-group">
                         <label>Fackligt engagemang (timmar/termin):</label>
                         <input type="number" id="configUnionHoursPerTerm" value="0" min="0" onchange="calculate()">
@@ -1110,7 +1122,6 @@
             prepMinIndividual: 10,
             prepMinEnsemble: 20,
             prepMinGroup: 15,
-            prepHoursPerWeek: 12.5,
             meetingHoursPerWeek: 2.5,
             APTHoursPerTerm: 0,
             unionHoursPerTerm: 0,
@@ -1164,7 +1175,6 @@
                 prepMinIndividual: defaultConfig.prepMinIndividual,
                 prepMinEnsemble: defaultConfig.prepMinEnsemble,
                 prepMinGroup: defaultConfig.prepMinGroup,
-                prepHoursPerWeek: parseFloat(document.getElementById('configPrepHoursPerWeek').value) || defaultConfig.prepHoursPerWeek,
                 meetingHoursPerWeek: parseFloat(document.getElementById('configMeetingHoursPerWeek').value) || defaultConfig.meetingHoursPerWeek,
                 APTHoursPerTerm: parseFloat(document.getElementById('configAPTHoursPerTerm').value) || defaultConfig.APTHoursPerTerm,
                 unionHoursPerTerm: parseFloat(document.getElementById('configUnionHoursPerTerm').value) || defaultConfig.unionHoursPerTerm,
@@ -1416,7 +1426,9 @@
             document.getElementById('configMusicHoursPerWeek').value = defaultConfig.musicHoursPerWeek;
             document.getElementById('configArtHoursPerWeek').value = defaultConfig.artHoursPerWeek;
             document.getElementById('configTeachingWeeks').value = defaultConfig.teachingWeeks;
-            document.getElementById('configPrepHoursPerWeek').value = defaultConfig.prepHoursPerWeek;
+            document.getElementById('configWarmupMin').value = defaultConfig.warmupMinPerDay;
+            document.getElementById('configPracticeMin').value = defaultConfig.practiceMinPerWeek;
+            document.getElementById('configPracticeMinNew').value = defaultConfig.practiceMinPerWeekNew;
             document.getElementById('configMeetingHoursPerWeek').value = defaultConfig.meetingHoursPerWeek;
             document.getElementById('configAPTHoursPerTerm').value = defaultConfig.APTHoursPerTerm;
             document.getElementById('configUnionHoursPerTerm').value = defaultConfig.unionHoursPerTerm;
