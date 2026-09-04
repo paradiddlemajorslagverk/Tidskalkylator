@@ -543,7 +543,37 @@
             </div>
             
             <div class="form-section">
-                <h2>Inställningar</h2>
+                <h2>Veckotyper & Planering</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Undervisningsveckor (per år):</label>
+                        <input type="number" id="configTeachingWeeks" value="25" onchange="calculate()">
+                        <small>Vanliga undervisningsveckor (12 per termin)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Produktionsveckor (per år):</label>
+                        <input type="number" id="configProductionWeeks" value="2" min="0" onchange="calculate()">
+                        <small>Planering, förberedelser</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Lovverksamhet (veckor):</label>
+                        <input type="number" id="configLovWeeks" value="3" min="0" onchange="calculate()">
+                        <small>Sportlov, påsklov, höstlov</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Lovverksamhet (dagar):</label>
+                        <input type="number" id="configLovDays" value="0" min="0" max="4" onchange="calculate()">
+                        <small>Enskilda lov-dagar</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2>Arbetstid & Möten</h2>
                 
                 <div class="form-row">
                     <div class="form-group">
@@ -564,28 +594,6 @@
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Kursperiod (veckor):</label>
-                        <input type="number" id="configCourseWeeks" value="25" onchange="calculate()">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Produktionsveckor (veckor/år):</label>
-                        <input type="number" id="configProductionWeeks" value="2" min="0" onchange="calculate()">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Lovverksamhet (veckor):</label>
-                        <input type="number" id="configLovWeeks" value="3" min="0" onchange="calculate()">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Lovverksamhet (dagar):</label>
-                        <input type="number" id="configLovDays" value="0" min="0" max="4" onchange="calculate()">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
                         <label>Förberedelse (h/vecka):</label>
                         <input type="number" id="configPrepHoursPerWeek" value="12.5" step="0.5" onchange="calculate()">
                         <small>Enligt arbetsbeskrivning</small>
@@ -601,6 +609,14 @@
                         <label>APT (timmar/termin):</label>
                         <input type="number" id="configAPTHoursPerTerm" value="0" min="0" onchange="calculate()">
                         <small>Årsplanering per termin</small>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Fackligt engagemang (timmar/termin):</label>
+                        <input type="number" id="configUnionHoursPerTerm" value="0" min="0" onchange="calculate()">
+                        <small>Fackmöten, samverkansmöten med chefen</small>
                     </div>
                 </div>
                 
@@ -811,7 +827,9 @@
             
             <div class="form-section">
                 <h2>Lektioner & Ensembler</h2>
-                <p style="margin-bottom: 20px; color: #666; font-size: 0.95em;">Ange antal lektioner/ensembler per vecka:</p>
+                <p style="margin-bottom: 20px; color: #666; font-size: 0.95em;">Ange antal lektioner per vecka:</p>
+                
+                <div class="section-header">Enskilda lektioner (10 min förberedelse/lektion)</div>
                 
                 <div class="form-row">
                     <div class="form-group">
@@ -819,6 +837,15 @@
                         <input type="number" id="lesson-instrument" value="0" min="0" onchange="calculate()">
                     </div>
                     
+                    <div class="form-group">
+                        <label>Pianolek:</label>
+                        <input type="number" id="lesson-pianolek" value="0" min="0" onchange="calculate()">
+                    </div>
+                </div>
+                
+                <div class="section-header">Ensembler/Orkester (20 min förberedelse/lektion)</div>
+                
+                <div class="form-row">
                     <div class="form-group">
                         <label>Orkester:</label>
                         <input type="number" id="lesson-orkester" value="0" min="0" onchange="calculate()">
@@ -828,7 +855,21 @@
                         <label>Kör:</label>
                         <input type="number" id="lesson-kör" value="0" min="0" onchange="calculate()">
                     </div>
+                    
+                    <div class="form-group">
+                        <label>Blåsensemble:</label>
+                        <input type="number" id="lesson-blas" value="0" min="0" onchange="calculate()">
+                    </div>
                 </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Sångensemble:</label>
+                        <input type="number" id="lesson-sangensemble" value="0" min="0" onchange="calculate()">
+                    </div>
+                </div>
+                
+                <div class="section-header">Grupp/Band (15 min förberedelse/lektion)</div>
                 
                 <div class="form-row">
                     <div class="form-group">
@@ -836,18 +877,6 @@
                         <input type="number" id="lesson-band" value="0" min="0" onchange="calculate()">
                     </div>
                     
-                    <div class="form-group">
-                        <label>Blåsensemble:</label>
-                        <input type="number" id="lesson-blas" value="0" min="0" onchange="calculate()">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Sångensemble:</label>
-                        <input type="number" id="lesson-sangensemble" value="0" min="0" onchange="calculate()">
-                    </div>
-                </div>
-                
-                <div class="form-row">
                     <div class="form-group">
                         <label>Brasslek:</label>
                         <input type="number" id="lesson-brasslek" value="0" min="0" onchange="calculate()">
@@ -857,17 +886,12 @@
                         <label>Blåslek:</label>
                         <input type="number" id="lesson-blaslek" value="0" min="0" onchange="calculate()">
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Flöjt yngre:</label>
-                        <input type="number" id="lesson-flöjt-yngre" value="0" min="0" onchange="calculate()">
-                    </div>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Pianolek:</label>
-                        <input type="number" id="lesson-pianolek" value="0" min="0" onchange="calculate()">
+                        <label>Flöjt yngre:</label>
+                        <input type="number" id="lesson-flöjt-yngre" value="0" min="0" onchange="calculate()">
                     </div>
                     
                     <div class="form-group">
@@ -889,7 +913,7 @@
                 </div>
                 
                 <div class="parameter-info">
-                    <strong>Förberedelsetid:</strong> 15 min per lektion (beräknas automatiskt).
+                    <strong>Förberedelsetid:</strong> Enskild (10 min), Ensemble/Orkester (20 min), Grupp/Band (15 min) per lektion.
                 </div>
             </div>
         </div>
@@ -1069,9 +1093,10 @@
                     <li><strong>Undervisning:</strong> Lektionstid med elever</li>
                     <li><strong>Övning:</strong> 60 min/vecka per instrument (90 min för nya)</li>
                     <li><strong>Uppvärmning:</strong> 15 min/dag per instrument</li>
-                    <li><strong>Förberedelse:</strong> 12,5 h/vecka enligt arbetsbeskrivning</li>
+                    <li><strong>Förberedelse:</strong> Enskild (10 min), Ensemble (20 min), Grupp (15 min) per lektion</li>
                     <li><strong>Möten:</strong> 2,5 h/vecka (inkluderar APT)</li>
                     <li><strong>APT:</strong> Årsplanering per termin</li>
+                    <li><strong>Fackligt:</strong> Fackmöten, samverkansmöten</li>
                     <li><strong>Underhåll:</strong> Enligt instrumentansvar</li>
                     <li><strong>Produktion:</strong> Produktionsveckor per år</li>
                     <li><strong>Lov:</strong> Lovverksamhet veckor + dagar</li>
@@ -1086,14 +1111,17 @@
             yearHours: 1880,
             musicHoursPerWeek: 20,
             artHoursPerWeek: 18,
-            courseWeeks: 25,
+            teachingWeeks: 25,
             warmupMinPerDay: 15,
             practiceMinPerWeek: 60,
             practiceMinPerWeekNew: 90,
-            prepMinPerLesson: 15,
+            prepMinIndividual: 10,
+            prepMinEnsemble: 20,
+            prepMinGroup: 15,
             prepHoursPerWeek: 12.5,
             meetingHoursPerWeek: 2.5,
             APTHoursPerTerm: 0,
+            unionHoursPerTerm: 0,
             productionWeeks: 2,
             lovWeeks: 3,
             lovDays: 0,
@@ -1137,14 +1165,17 @@
                 yearHours: parseFloat(document.getElementById('configYearHours').value) || defaultConfig.yearHours,
                 musicHoursPerWeek: parseFloat(document.getElementById('configMusicHoursPerWeek').value) || defaultConfig.musicHoursPerWeek,
                 artHoursPerWeek: parseFloat(document.getElementById('configArtHoursPerWeek').value) || defaultConfig.artHoursPerWeek,
-                courseWeeks: parseFloat(document.getElementById('configCourseWeeks').value) || defaultConfig.courseWeeks,
+                teachingWeeks: parseFloat(document.getElementById('configTeachingWeeks').value) || defaultConfig.teachingWeeks,
                 warmupMinPerDay: parseFloat(document.getElementById('configWarmupMin').value) || defaultConfig.warmupMinPerDay,
                 practiceMinPerWeek: parseFloat(document.getElementById('configPracticeMin').value) || defaultConfig.practiceMinPerWeek,
                 practiceMinPerWeekNew: parseFloat(document.getElementById('configPracticeMinNew').value) || defaultConfig.practiceMinPerWeekNew,
-                prepMinPerLesson: parseFloat(document.getElementById('configPrepMin').value) || defaultConfig.prepMinPerLesson,
+                prepMinIndividual: defaultConfig.prepMinIndividual,
+                prepMinEnsemble: defaultConfig.prepMinEnsemble,
+                prepMinGroup: defaultConfig.prepMinGroup,
                 prepHoursPerWeek: parseFloat(document.getElementById('configPrepHoursPerWeek').value) || defaultConfig.prepHoursPerWeek,
                 meetingHoursPerWeek: parseFloat(document.getElementById('configMeetingHoursPerWeek').value) || defaultConfig.meetingHoursPerWeek,
                 APTHoursPerTerm: parseFloat(document.getElementById('configAPTHoursPerTerm').value) || defaultConfig.APTHoursPerTerm,
+                unionHoursPerTerm: parseFloat(document.getElementById('configUnionHoursPerTerm').value) || defaultConfig.unionHoursPerTerm,
                 productionWeeks: parseFloat(document.getElementById('configProductionWeeks').value) || defaultConfig.productionWeeks,
                 lovWeeks: parseFloat(document.getElementById('configLovWeeks').value) || defaultConfig.lovWeeks,
                 lovDays: parseFloat(document.getElementById('configLovDays').value) || defaultConfig.lovDays,
@@ -1158,7 +1189,7 @@
             
             const isArtSubject = ['teater', 'bild'].includes(mainEmployment);
             const teachingHoursPerWeek = isArtSubject ? config.artHoursPerWeek : config.musicHoursPerWeek;
-            const totalTeachingHours = teachingHoursPerWeek * config.courseWeeks;
+            const totalTeachingHours = teachingHoursPerWeek * config.teachingWeeks;
             
             let totalPracticeHours = 0;
             let totalWarmupHours = 0;
@@ -1168,8 +1199,8 @@
                 if (document.getElementById('inst-' + inst).checked) {
                     const isNew = document.getElementById('new-' + inst).checked;
                     const practiceMinPerWeek = isNew ? config.practiceMinPerWeekNew : config.practiceMinPerWeek;
-                    const practiceHours = (practiceMinPerWeek / 60) * config.courseWeeks;
-                    const warmupHours = (config.warmupMinPerDay / 60) * config.courseWeeks * 5;
+                    const practiceHours = (practiceMinPerWeek / 60) * config.teachingWeeks;
+                    const warmupHours = (config.warmupMinPerDay / 60) * config.teachingWeeks * 5;
                     
                     totalPracticeHours += practiceHours;
                     totalWarmupHours += warmupHours;
@@ -1184,19 +1215,30 @@
                 }
             });
             
-            let totalLessonsPerWeek = 0;
-            const lessonTypes = [
-                'instrument', 'orkester', 'kör', 'band', 'blas', 'sangensemble',
-                'brasslek', 'blaslek', 'flöjt-yngre', 'pianolek', 'sang-teaterlek',
-                'produktion', 'teori'
-            ];
+            // Calculate lessons by type
+            const individualLessons = (parseFloat(document.getElementById('lesson-instrument').value) || 0) +
+                                      (parseFloat(document.getElementById('lesson-pianolek').value) || 0);
             
-            lessonTypes.forEach(function(type) {
-                const count = parseFloat(document.getElementById('lesson-' + type).value) || 0;
-                totalLessonsPerWeek += count;
-            });
+            const ensembleLessons = (parseFloat(document.getElementById('lesson-orkester').value) || 0) +
+                                    (parseFloat(document.getElementById('lesson-kör').value) || 0) +
+                                    (parseFloat(document.getElementById('lesson-blas').value) || 0) +
+                                    (parseFloat(document.getElementById('lesson-sangensemble').value) || 0);
             
-            const totalPrepHours = (config.prepHoursPerWeek) * config.courseWeeks;
+            const groupLessons = (parseFloat(document.getElementById('lesson-band').value) || 0) +
+                                 (parseFloat(document.getElementById('lesson-brasslek').value) || 0) +
+                                 (parseFloat(document.getElementById('lesson-blaslek').value) || 0) +
+                                 (parseFloat(document.getElementById('lesson-flöjt-yngre').value) || 0) +
+                                 (parseFloat(document.getElementById('lesson-sang-teaterlek').value) || 0) +
+                                 (parseFloat(document.getElementById('lesson-produktion').value) || 0) +
+                                 (parseFloat(document.getElementById('lesson-teori').value) || 0);
+            
+            const totalLessonsPerWeek = individualLessons + ensembleLessons + groupLessons;
+            
+            // Calculate prep time by lesson type
+            const prepHoursIndividual = (individualLessons * config.prepMinIndividual / 60) * config.teachingWeeks;
+            const prepHoursEnsemble = (ensembleLessons * config.prepMinEnsemble / 60) * config.teachingWeeks;
+            const prepHoursGroup = (groupLessons * config.prepMinGroup / 60) * config.teachingWeeks;
+            const totalPrepHours = prepHoursIndividual + prepHoursEnsemble + prepHoursGroup;
             
             let totalMaintenanceHours = 0;
             const maintenanceBreakdown = [];
@@ -1239,14 +1281,15 @@
             
             const extraPartiturMin = parseFloat(document.getElementById('extra-partitur').value) || 0;
             const extraArrangemangMin = parseFloat(document.getElementById('extra-arrangemang').value) || 0;
-            const extraPartiturHours = (extraPartiturMin / 60) * config.courseWeeks;
-            const extraArrangemangHours = (extraArrangemangMin / 60) * config.courseWeeks;
+            const extraPartiturHours = (extraPartiturMin / 60) * config.teachingWeeks;
+            const extraArrangemangHours = (extraArrangemangMin / 60) * config.teachingWeeks;
             const totalExtraHours = extraPartiturHours + extraArrangemangHours;
             
             const productionHours = config.productionWeeks * config.hoursPerWeek;
             const lovHours = (config.lovWeeks * config.hoursPerWeek) + (config.lovDays * config.hoursPerDay);
-            const meetingHours = config.meetingHoursPerWeek * config.courseWeeks;
+            const meetingHours = config.meetingHoursPerWeek * config.teachingWeeks;
             const APTHours = config.APTHoursPerTerm * 2;
+            const unionHours = config.unionHoursPerTerm * 2;
             const otherHoursBase = 875 * serviceGrade;
             
             const totalRequiredHours = 
@@ -1256,6 +1299,7 @@
                 totalPrepHours + 
                 meetingHours +
                 APTHours +
+                unionHours +
                 totalMaintenanceHours + 
                 totalExtraHours + 
                 productionHours + 
@@ -1269,10 +1313,10 @@
             document.getElementById('totalHours').textContent = totalRequiredHours.toFixed(0) + ' h';
             document.getElementById('availableHours').textContent = availableHours.toFixed(0) + ' h';
             document.getElementById('teachingHours').textContent = totalTeachingHours.toFixed(0) + ' h';
-            document.getElementById('courseWeeks').textContent = config.courseWeeks;
+            document.getElementById('courseWeeks').textContent = config.teachingWeeks;
             document.getElementById('hoursPerWeek').textContent = teachingHoursPerWeek;
             
-            const otherTotal = totalPracticeHours + totalWarmupHours + totalPrepHours + meetingHours + APTHours + totalMaintenanceHours + totalExtraHours + productionHours + lovHours + otherHoursBase;
+            const otherTotal = totalPracticeHours + totalWarmupHours + totalPrepHours + meetingHours + APTHours + unionHours + totalMaintenanceHours + totalExtraHours + productionHours + lovHours + otherHoursBase;
             document.getElementById('otherHours').textContent = otherTotal.toFixed(0) + ' h';
             
             const utilizationBar = document.getElementById('utilizationBar');
@@ -1313,6 +1357,7 @@
                 'Förberedelse': totalPrepHours,
                 'Möten': meetingHours,
                 'APT': APTHours,
+                'Fackligt': unionHours,
                 'Underhåll': totalMaintenanceHours,
                 'Extra': totalExtraHours,
                 'Produktion': productionHours,
@@ -1378,10 +1423,11 @@
             document.getElementById('configYearHours').value = defaultConfig.yearHours;
             document.getElementById('configMusicHoursPerWeek').value = defaultConfig.musicHoursPerWeek;
             document.getElementById('configArtHoursPerWeek').value = defaultConfig.artHoursPerWeek;
-            document.getElementById('configCourseWeeks').value = defaultConfig.courseWeeks;
+            document.getElementById('configTeachingWeeks').value = defaultConfig.teachingWeeks;
             document.getElementById('configPrepHoursPerWeek').value = defaultConfig.prepHoursPerWeek;
             document.getElementById('configMeetingHoursPerWeek').value = defaultConfig.meetingHoursPerWeek;
             document.getElementById('configAPTHoursPerTerm').value = defaultConfig.APTHoursPerTerm;
+            document.getElementById('configUnionHoursPerTerm').value = defaultConfig.unionHoursPerTerm;
             document.getElementById('configProductionWeeks').value = defaultConfig.productionWeeks;
             document.getElementById('configLovWeeks').value = defaultConfig.lovWeeks;
             document.getElementById('configLovDays').value = defaultConfig.lovDays;
