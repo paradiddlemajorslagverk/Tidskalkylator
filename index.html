@@ -827,9 +827,7 @@
             
             <div class="form-section">
                 <h2>Lektioner & Ensembler</h2>
-                <p style="margin-bottom: 20px; color: #666; font-size: 0.95em;">Ange antal lektioner per vecka:</p>
-                
-                <div class="section-header">Enskilda lektioner (10 min förberedelse/lektion)</div>
+                <p style="margin-bottom: 20px; color: #666; font-size: 0.95em;">Ange antal lektioner/ensembler per vecka:</p>
                 
                 <div class="form-row">
                     <div class="form-group">
@@ -837,15 +835,6 @@
                         <input type="number" id="lesson-instrument" value="0" min="0" onchange="calculate()">
                     </div>
                     
-                    <div class="form-group">
-                        <label>Pianolek:</label>
-                        <input type="number" id="lesson-pianolek" value="0" min="0" onchange="calculate()">
-                    </div>
-                </div>
-                
-                <div class="section-header">Ensembler/Orkester (20 min förberedelse/lektion)</div>
-                
-                <div class="form-row">
                     <div class="form-group">
                         <label>Orkester:</label>
                         <input type="number" id="lesson-orkester" value="0" min="0" onchange="calculate()">
@@ -855,21 +844,7 @@
                         <label>Kör:</label>
                         <input type="number" id="lesson-kör" value="0" min="0" onchange="calculate()">
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Blåsensemble:</label>
-                        <input type="number" id="lesson-blas" value="0" min="0" onchange="calculate()">
-                    </div>
                 </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Sångensemble:</label>
-                        <input type="number" id="lesson-sangensemble" value="0" min="0" onchange="calculate()">
-                    </div>
-                </div>
-                
-                <div class="section-header">Grupp/Band (15 min förberedelse/lektion)</div>
                 
                 <div class="form-row">
                     <div class="form-group">
@@ -877,6 +852,18 @@
                         <input type="number" id="lesson-band" value="0" min="0" onchange="calculate()">
                     </div>
                     
+                    <div class="form-group">
+                        <label>Blåsensemble:</label>
+                        <input type="number" id="lesson-blas" value="0" min="0" onchange="calculate()">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Sångensemble:</label>
+                        <input type="number" id="lesson-sangensemble" value="0" min="0" onchange="calculate()">
+                    </div>
+                </div>
+                
+                <div class="form-row">
                     <div class="form-group">
                         <label>Brasslek:</label>
                         <input type="number" id="lesson-brasslek" value="0" min="0" onchange="calculate()">
@@ -886,12 +873,17 @@
                         <label>Blåslek:</label>
                         <input type="number" id="lesson-blaslek" value="0" min="0" onchange="calculate()">
                     </div>
+                    
+                    <div class="form-group">
+                        <label>Flöjt yngre:</label>
+                        <input type="number" id="lesson-flöjt-yngre" value="0" min="0" onchange="calculate()">
+                    </div>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Flöjt yngre:</label>
-                        <input type="number" id="lesson-flöjt-yngre" value="0" min="0" onchange="calculate()">
+                        <label>Pianolek:</label>
+                        <input type="number" id="lesson-pianolek" value="0" min="0" onchange="calculate()">
                     </div>
                     
                     <div class="form-group">
